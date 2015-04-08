@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit_reader", "bit_reader\bit_reader.vcxproj", "{46DC8950-9C51-40A7-A0FA-4175EA2AF396}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit_iterator", "bit_iterator\bit_iterator.vcxproj", "{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittest", "unittest\unittest.vcxproj", "{DB66CC8A-7940-457B-BBFA-3FD715C4B5A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46DC8950-9C51-40A7-A0FA-4175EA2AF396}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46DC8950-9C51-40A7-A0FA-4175EA2AF396}.Debug|Win32.Build.0 = Debug|Win32
+		{46DC8950-9C51-40A7-A0FA-4175EA2AF396}.Release|Win32.ActiveCfg = Release|Win32
+		{46DC8950-9C51-40A7-A0FA-4175EA2AF396}.Release|Win32.Build.0 = Release|Win32
+		{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}.Debug|Win32.Build.0 = Debug|Win32
+		{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}.Release|Win32.ActiveCfg = Release|Win32
+		{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}.Release|Win32.Build.0 = Release|Win32
+		{DB66CC8A-7940-457B-BBFA-3FD715C4B5A0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DB66CC8A-7940-457B-BBFA-3FD715C4B5A0}.Debug|Win32.Build.0 = Debug|Win32
+		{DB66CC8A-7940-457B-BBFA-3FD715C4B5A0}.Release|Win32.ActiveCfg = Release|Win32
+		{DB66CC8A-7940-457B-BBFA-3FD715C4B5A0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
