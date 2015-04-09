@@ -3,37 +3,77 @@
 #include <fstream>
 #include <sstream>
 
+using namespace std;
+int bitCount = 0;
+int byte[8] {0, 0, 0, 0, 0, 0, 0, 0};
+int flag = 0;
 class bit_iterator
 {
-	std::ifstream thread;
+	//std::ifstream thread;
+	int charNumber;
+
+
 
 public:
 
-	bit_iterator(std::string fileName)					//конструктор, в нем открываетс€ файл. 
+	bit_iterator(std::ifstream &stream)					//конструктор, в нем открываетс€ файл. 
 	{
-		thread.open(fileName, std::ios::binary);
+		char ch;
+		/*stream.get(ch);
+		charNumber = (int)ch;*/
+		
+		while (!stream.eof())
+		{
+			stream.get(ch);
+			
+			charNumber = (int)ch;
+			readBitFast();
+
+			cout << " flagg " << (int)ch;
+		}
+		// flag = -1;
+
+
+
 	};
 
 	~bit_iterator()							// ƒеструктор. Ќужен ли? тут корректно закрываем файл.
 	{
-		thread.close();
-	}									
+	}
 
 
+
+	int readBit()
+	{
+		//cout << " flagg ";
+		if (flag == -1) return -1;
+
+		else 
+		{
+			bitCount++;
+			if (bitCount <= 7) return byte[bitCount];
+			else readBitFast();
+		};
+
+	}
+
+	
 	int readBitFast()						//здесь считывание через операцию & 0x1, вывод идет начина€ со старших битов. Ѕолее производительна.
 	{
-		int dec = readByte();
-		if (dec == -1) return -1;
+		if (flag == -1) return -1;
 		else
 			for (int j = 0; j < 8; ++j)
 			{
-				return (dec & 0x1);
-				dec >>= 1;
+				byte[j] = (charNumber & 0x1);
+				charNumber >>= 1;
 			}
 	};
 
+};
 
-	int readBitFor()							//здесь происходит считывание через цикл for(;;), не могу проверить правильность.
+
+
+/*	int readBitFor()							//здесь происходит считывание через цикл for(;;), не могу проверить правильность.
 												//также € не могу проверить как происходит вывод: со старших или с младших бит? 
 	{												//(суд€ по реализации - обратный пор€док тут не делал, поэтому как readBitFast(), со старших.)
 		int byte[8] = { 0, 0, 0, 0, 0, 0, 0, 0 }; 
@@ -48,15 +88,14 @@ public:
 			}
 	}
 
-
-	int readBitBitset()									//вывод идет со старших битов.
+	*/
+/*	int readBitBitset()									//вывод идет со старших битов.
 	{
-		int dec = readByte();
 		int k = 0;
-		if (dec == -1) return -1;
+		if (charNumber == -1) return -1;
 		else
 		{
-			std::bitset<8> byte(dec);
+			std::bitset<8> byte(charNumber);
 			for (int i = 0; i < 8; i++)
 				return byte[i];
 		
@@ -65,7 +104,7 @@ public:
 
 
 
-
+	
 
 	int readByte()							//функци€, которо€ достает конкретный символ.
 	{
@@ -85,3 +124,4 @@ public:
 		}
 	};
 };
+*/

@@ -3,13 +3,16 @@
 
 int main()
 {
-	bit_iterator b("1.txt");							//долго думал, что передавать. очень много искал начет передачи потока, хотел уточнить
+	int cache, i;
+	std::ifstream f("1.txt");
+	bit_iterator b(f);							//долго думал, что передавать. очень много искал начет передачи потока, хотел уточнить
 	int result;
 	do 
 		{
+			
 			//result = b.readBitFast();
 			//result = b.readBitFor();               
-			result = b.readBitBitset();				//наверное, самый крутой.
+			result = b.readBit();				//наверное, самый крутой.
 			std::cout << result;
 		} while (result != -1);
 
