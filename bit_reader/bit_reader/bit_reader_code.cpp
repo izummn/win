@@ -1,23 +1,18 @@
-#include <C:\Users\Марат\Documents\GitHub\win\bit_reader\bit_iterator\bit_iterator.hpp>;
+#include <C:\Users\NADERSHIN\Documents\Visual Studio 2013\Projects\one\bit_iterator\bit_iterator.hpp>;
 #include <iostream>
 
 int main()
 {
 	int cache, i;
-	std::ifstream f("1.txt");
-	bit_iterator b(f);							//долго думал, что передавать. очень много искал начет передачи потока, хотел уточнить
+	std::ifstream f("1.txt", ios::binary);
+	bit_iterator b(f);						
 	int result;
-	do 
-		{
-			
-			//result = b.readBitFast();
-			//result = b.readBitFor();               
-			result = b.readBit();				//наверное, самый крутой.
-			std::cout << result;
-		} while (result != -1);
+	do
+	{            
+		result = b.readBit();			
+		std::cout << result;
+	} while (result != -1);
 
 	std::cout << std::endl;
 	return 0;
 }
-
-
