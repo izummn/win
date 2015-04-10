@@ -1,9 +1,8 @@
-#include <C:\Users\NADERSHIN\Documents\Visual Studio 2013\Projects\one\bit_iterator\bit_iterator.hpp>;
+#include <C:\Users\NADERSHIN\Documents\Visual Studio 2013\Projects\one\bit_iterator\bit_iterator.hpp>
 #include <iostream>
 
 int main()
 {
-	int cache, i;
 	std::ifstream f("1.txt", ios::binary);
 	bit_iterator b(f);						
 	int result;
@@ -15,4 +14,4 @@ int main()
 
 	std::cout << std::endl;
 	return 0;
-} 
+}
