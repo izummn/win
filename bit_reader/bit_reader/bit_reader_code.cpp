@@ -3,17 +3,32 @@
 using namespace std;
 
 
-int main()
+int main(int argc, char *argv[])
 {
-	std::ifstream f("1.txt", ios::binary);
-	bit_iterator b(f);
-	int result;
-	do
+	if (argc < 2)
 	{
-		result = b.readBit();
-		cout << result;
-	} while (result != -1);
+		std::cout << "Enter file name!" << std::endl;
+		exit(1);
+	}
+	string name(argv[1]);
 
-	cout << endl;
-	return 0;
+	ifstream f(name, ios::binary);
+	f.exceptions(std::ifstream::badbit);
+	try {
+		bit_iterator b(f);
+		int result;
+		do
+		{
+		    result = b.readBit();
+			cout << result;
+		} while (result != -1);
+
+		cout << endl;
+		return 0;
+		}
+
+	catch (std::ifstream::failure &e)
+	{
+		std::cout << "Exception opening/reading/closing file\n";
+	}
 }
