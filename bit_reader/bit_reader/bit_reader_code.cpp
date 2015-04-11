@@ -1,17 +1,19 @@
-#include <C:\Users\NADERSHIN\Documents\Visual Studio 2013\Projects\one\bit_iterator\bit_iterator.hpp>
+#include <C:\Users\Марат\Documents\GitHub\win\bit_reader\bit_iterator\bit_iterator.hpp>
 #include <iostream>
+using namespace std;
+
 
 int main()
 {
 	std::ifstream f("1.txt", ios::binary);
-	bit_iterator b(f);						
+	bit_iterator b(f);
 	int result;
 	do
-	{            
-		result = b.readBit();			
-		std::cout << result;
+	{
+		result = b.readBit();
+		cout << result;
 	} while (result != -1);
 
-	std::cout << std::endl;
+	cout << endl;
 	return 0;
 }

@@ -1,8 +1,6 @@
 #include <iostream>
-#include <bitset>
 #include <fstream>
-#include <sstream>
-#include <string>
+#include <array>
 
 using namespace std;
 
@@ -10,8 +8,8 @@ class bit_iterator
 {
 private:
 	std::ifstream &stream;
-	int bitCount = 8, countString = 1, flag = 0;
-	int byte[8];
+	int bitCount = 8, flag = 0;
+	array <int, 8> byte = {};
 
 public:
 	bit_iterator(std::ifstream &p) :stream(p) {}
@@ -38,24 +36,21 @@ public:
 	}
 
 
-	void readBitFast()
+	void readBitFast()				//The conclusion from the lower bits
 	{
 		char ch;
-		stream.seekg(countString, ios::beg);
 		stream.get(ch);
-
 		if (stream.eof()) flag = -1;
 		else
+		{
+			int charNumber = abs((int)ch);
+			for (int j = 7; j >= 0; j--)
 			{
-				int charNumber = abs((int)ch);
-				for (int j = 0; j <= 7; ++j)
-				{
-					byte[j] = (charNumber & 0x1);
-					charNumber >>= 1;
-				}
-				countString++;
-		        }
-	
+				byte[j] = (charNumber & 0x1);
+				charNumber >>= 1;
+			}
+		}
+
 	}
 
 };
