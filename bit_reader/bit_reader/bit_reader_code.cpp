@@ -1,7 +1,8 @@
-//#include <bit_iterator.hpp>
-#include <C:\Users\Марат\Documents\GitHub\win\bit_reader\bit_iterator\bit_iterator.hpp>
+#include <bit_iterator.hpp>
 #include <fstream>
 #include <iostream>
+
+
 
 using namespace std;
 
