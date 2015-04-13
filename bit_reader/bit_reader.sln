@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit_reader", "bit_reader\bit_reader.vcxproj", "{46DC8950-9C51-40A7-A0FA-4175EA2AF396}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CFCA709-E099-4D91-B85A-4A0D55CAA64C} = {0CFCA709-E099-4D91-B85A-4A0D55CAA64C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bit_iterator", "bit_iterator\bit_iterator.vcxproj", "{0CFCA709-E099-4D91-B85A-4A0D55CAA64C}"
 EndProject

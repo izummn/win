@@ -2,14 +2,12 @@
 #include <fstream>
 #include <array>
 
-using namespace std;
-
 class bit_iterator
 {
 private:
 	std::ifstream &stream;
 	int bitCount = 8, flag = 0;
-	array <int, 8> byte = {};
+	std::array <int, 8> byte = {};
 
 public:
 	bit_iterator(std::ifstream &p) :stream(p) {}

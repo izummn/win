@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bit_iterator.hpp">
-      <Filter>Заголовочные файлы</Filter>
+      <Filter>Файлы исходного кода</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
