@@ -38,6 +38,9 @@ public:
 	{
 		char ch;
 		stream.get(ch);
+
+		//std::cout << "  ch: " << ch << "   int: " << abs((int)ch);
+
 		if (stream.eof()) flag = -1;
 		else
 		{
@@ -47,6 +50,11 @@ public:
 				byte[j] = (charNumber & 0x1);
 				charNumber >>= 1;
 			}
+
+			/*std::cout << "   byte: ";
+			for (int j = 0; j <= 7; j++)
+				std::cout << byte[j];
+			std::cout << std::endl;*/
 		}
 
 	}
