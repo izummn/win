@@ -14,10 +14,6 @@ public:
 	~bit_iterator(){}
 	int readBit()
 	{
-		if (flag == -1) return -1;
-
-		else
-		{
 			if (bitCount <= 6)
 			{
 				bitCount++;
@@ -26,11 +22,10 @@ public:
 			else
 			{
 				readBitFast();
+				if (flag == -1) return -1;
 				bitCount = 0;
 				return byte[0];
 			}
-
-		}
 	}
 
 
@@ -38,23 +33,25 @@ public:
 	{
 		char ch;
 		stream.get(ch);
-
+		
 		//std::cout << "  ch: " << ch << "   int: " << abs((int)ch);
 
 		if (stream.eof()) flag = -1;
 		else
 		{
-			int charNumber = abs((int)ch);
+			int charNumber = (int)ch;
 			for (int j = 7; j >= 0; j--)
 			{
 				byte[j] = (charNumber & 0x1);
+			//	std::cout << "  charNumber= " << charNumber << "  " << " j= " << j;
 				charNumber >>= 1;
 			}
+			std::cout << std::endl;
 
-			/*std::cout << "   byte: ";
-			for (int j = 0; j <= 7; j++)
-				std::cout << byte[j];
-			std::cout << std::endl;*/
+		//	std::cout << "   byte: ";
+		//	for (int j = 0; j <= 7; j++)
+		//		std::cout << byte[j];
+			std::cout << std::endl;
 		}
 
 	}
