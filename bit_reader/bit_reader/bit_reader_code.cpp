@@ -21,14 +21,14 @@ int main(int argc, char *argv[])
 		int result;
 		do
 		{
-		    result = b.readBit();
+			result = b.readBit();
 			if (result == -1) break;
 			cout << result;
 		} while (result != -1);
 
 		cout << endl;
 		return 0;
-		}
+	}
 
 	catch (std::ifstream::failure &e)
 	{
