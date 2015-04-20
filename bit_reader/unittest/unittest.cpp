@@ -7,54 +7,60 @@
 #include <boost/filesystem.hpp>
 #include <catch.hpp>
 
+const int nBits = 32;
 
+const std::bitset < nBits > manual("1011100110110000101100100");
+const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
+const std::bitset < nBits > zeros;
+const std::bitset < nBits > randoms(std::rand());
 
-std::string getRandomLine();
-std::string manualLine = "011100110110000111100100";
-std::string oneString = "11111111111111111111111111111111";
-std::string zeroString = "00000000000000000000000000000000";
-std::string randomLine = getRandomLine();
-
-
-
-
-std::string getRandomLine()
+class temprorary_filename
 {
-	std::string line;
-	for (int i = 0; i <= 31; i++)
+private:
+	std::string path;
+public:
+	temprorary_filename()
 	{
-		int t = std::rand() % 2;
-		line = line + std::to_string(t);
+		 path = boost::filesystem::unique_path().string();
 	}
-	//  std::cout << line;
-	return line;
-}
-std::string convertBitsLineForTest(std::string line)
+	~temprorary_filename()
+	{
+		boost::filesystem::remove(path);
+	}
+	std::string getFilename()
+	{
+		return path;
+	}
+};
+
+
+
+
+uint32_t swapEndianness(uint32_t bits)
 {
-	while (line.length() < 32)
-		line = '0' + line;
-	std::string temp, result;
+	std::bitset<nBits> temp(bits);
+	std::bitset<nBits> result;
+	int k = 0;
 	for (int i = 31; i >= 0; i--)
 	{
-		temp = line[i] + temp;
+		result[i % 8 + k] = temp[i];
 		if (i % 8 == 0)
 		{
-			result = result + temp;
-			temp = "";
+			k += 8;
 		}
+
 	}
-	return result;
-};
-std::string testString(std::string bitsLine)
+	return result.to_ulong();
+}
+
+
+std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
 {
-	std::string path = boost::filesystem::unique_path().string();
+	std::bitset<nBits> b(bitsLine);
+	uint32_t t	= swapEndianness(static_cast <uint32_t>(b.to_ulong()));
 
-	while (bitsLine.length() < 32)
-		bitsLine = '0' + bitsLine;
-
-	std::bitset<32> b(bitsLine);
-	auto t = b.to_ulong();
-	std::ofstream file1(path, std::ios::binary);
+	temprorary_filename fileName;
+	std::ofstream file1(fileName.getFilename(), std::ios::binary);
 
 	if (file1.is_open())
 	{
@@ -62,60 +68,89 @@ std::string testString(std::string bitsLine)
 		file1.close();
 	}
 
-	std::ifstream file2(path, std::ios::binary);
+	std::ifstream file2(fileName.getFilename(), std::ios::binary);
 	bit_iterator bit_object(file2);
-	int result;
-	std::string str;
+	std::bitset<nBits> temp; 
 
-	result = bit_object.readBit();
-	do
+	for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
 	{
-		str = str + std::to_string(result);
-		result = bit_object.readBit();
-	} while (result != -1);
+		temp <<= 1;
+		temp |= result & 0x1;
+	}
+
 	file2.close();
-	boost::filesystem::remove(path);
-	return str;
+	return temp;
 }
-std::string testFile()
-{
 
-	std::ifstream file("1.txt", std::ios::binary);
-	file.seekg(0);
-	bit_iterator bit_object(file);
-	int result;
-	std::string str;
 
-	result = bit_object.readBit();
-	do
-	{
-		str = str + std::to_string(result);
-		result = bit_object.readBit();
-	} while (result != -1);
-	//  std::cout << str << std::endl;
-	return str;
-}
 
 TEST_CASE(" Test Bit reader: ", "one")
 {
+	
 	SECTION(" Manual string: ") {
-		REQUIRE(testString(manualLine) == convertBitsLineForTest(manualLine));
-	}
-
-	SECTION(" String with 1: ") {
-		REQUIRE(testString(oneString) == convertBitsLineForTest(oneString));
+		REQUIRE(testBits(manual) == manual);
 	}
 
 	SECTION(" String with 0: ") {
-		REQUIRE(testString(zeroString) == convertBitsLineForTest(zeroString));
+		REQUIRE(testBits(zeros) == zeros);
 	}
 
 	SECTION(" Random string: ") {
-		REQUIRE(testString(randomLine) == convertBitsLineForTest(randomLine));
+		REQUIRE(testBits(randoms) == randoms);
 	}
 
-	SECTION(" Two reads of one file: ") {
-		REQUIRE(testFile() == testFile());
+	SECTION("  Ones file: ") {
+		REQUIRE(testBits(ones) == ones);
+
+	}
+
+	/*SECTION("  Empty file: ") {
+
+		temprorary_filename fileName;
+	//	std::ofstream file(fileName.getFilename(), std::ios::binary);
+
+		std::ifstream file(fileName.getFilename(), std::ios::binary);
+		bit_iterator bit_object(file);
+		std::bitset<nBits> temp;
+
+		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+		{
+			temp <<= 1;
+			temp |= result & 0x1;
+		}
+
+		file.close();
+
+		REQUIRE(temp == 0);
+
+	}*/
+
+
+	SECTION("  Test file with seekg: ") {
+
+
+		std::ifstream file("1.txt", std::ios::binary);
+
+		bit_iterator bit_object(file);
+		int result;
+
+
+		std::bitset<nBits> temp1(0);
+		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+		{
+			temp1 <<= 1;
+			temp1 |= result & 0x1;
+		}
+	
+		file.seekg(0);
+		std::bitset<nBits> temp2;
+		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+		{
+			temp2 <<= 1;
+			temp2 |= result & 0x1;
+		}
+
+		REQUIRE(temp1 == temp2);
 
 	}
 };
