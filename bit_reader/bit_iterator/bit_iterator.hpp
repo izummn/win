@@ -10,7 +10,9 @@ private:
 	std::array <int, 8> byte;
 
 public:
+
 	bit_iterator(std::ifstream &p) :stream(p) {}
+
 	~bit_iterator(){}
 	int readBit()
 	{

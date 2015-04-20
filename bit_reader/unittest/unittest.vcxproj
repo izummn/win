@@ -41,12 +41,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Марат\Documents\GitHub\Catch\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\bit_reader;C:\boost_1_57_0;..\bit_iterator</IncludePath>
+    <IncludePath>C:\Users\Марат\Documents\GitHub\Catch\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\bit_reader;C:\boost_1_57_0\;..\bit_iterator</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\boost_1_57_0\libs</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Марат\Documents\GitHub\Catch\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\bit_reader;C:\boost_1_57_0;..\bit_iterator</IncludePath>
+    <IncludePath>C:\Users\Марат\Documents\GitHub\Catch\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\bit_reader;C:\boost_1_57_0\;..\bit_iterator</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);C:\boost_1_57_0\libs</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
