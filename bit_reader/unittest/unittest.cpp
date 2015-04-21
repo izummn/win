@@ -119,40 +119,28 @@ TEST_CASE(" Test Bit reader: ", "one")
 			temp1 |= result & 0x1;
 		}
 
+		file.clear();
 		file.seekg(0);
+	
 		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
 		{
 			temp2 <<= 1;
-			std::cout << "  flaggg ";
 			temp2 |= result & 0x1;
 		}
-
-		std::cout << temp1 << " temp2:" << temp2;
-
 		REQUIRE(temp1 == temp2);
 
 	}
 
-/*	SECTION("  Empty file: ") {
+	SECTION("  Empty file: ") {
 
 		temprorary_filename fileName;
-		std::ifstream file(fileName.getFilename(), std::ios::binary);
+		std::ofstream file1(fileName.getFilename());						// this line creates file
+		std::ifstream file2(fileName.getFilename(), std::ios::binary);
+		bit_iterator bit_object(file2);
+	
+		REQUIRE(bit_object.readBit() == -1);
 
-		bit_iterator bit_object(file);
-		std::bitset<nBits> fileBits;
-		std::bitset<nBits> emptyBits;
-
-		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
-		{
-			
-			fileBits <<= 1;
-			fileBits |= result & 0x1;
-		}
-		
-		
-		REQUIRE(fileBits == emptyBits);
-
-	}*/
+	}
 };
 
 

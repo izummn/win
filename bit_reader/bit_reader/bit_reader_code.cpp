@@ -30,8 +30,6 @@ int main(int argc, char *argv[])
 			if (result == -1) break;
 			cout << result;
 		} while (result != -1);
-
-		cout << endl;
 		return 0;
 	}
 

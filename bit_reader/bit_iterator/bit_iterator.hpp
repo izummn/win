@@ -12,8 +12,8 @@ private:
 public:
 
 	bit_iterator(std::ifstream &p) :stream(p) {}
-
 	~bit_iterator(){}
+
 	int readBit()
 	{
 		if (bitCount <= 6)
@@ -24,9 +24,16 @@ public:
 		else
 		{
 			readBitFast();
-			if (flag == -1) return -1;
-			bitCount = 0;
-			return byte[0];
+			if (flag == -1)
+			{
+				flag = 0;
+				return -1;
+			}
+			else
+			{
+				bitCount = 0;
+				return byte[0];
+			}
 		}
 	}
 
@@ -41,7 +48,9 @@ public:
 			int charNumber = (int)ch;
 			for (int j = 7; j >= 0; j--)
 			{
+				
 				byte[j] = (charNumber & 0x1);
+				
 				charNumber >>= 1;
 			}
 		}
