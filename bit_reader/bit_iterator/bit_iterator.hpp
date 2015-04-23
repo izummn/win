@@ -6,7 +6,7 @@ class bit_iterator
 {
 private:
 	std::ifstream &stream;
-	int bitCount = 8, flag = 0;
+	int bitCount = 8;
 	std::array <int, 8> byte;
 
 public:
@@ -24,9 +24,8 @@ public:
 		else
 		{
 			readBitFast();
-			if (flag == -1)
+			if (byte[0] == -1)
 			{
-				flag = 0;
 				return -1;
 			}
 			else
@@ -42,15 +41,13 @@ public:
 	{
 		char ch;
 		stream.get(ch);
-		if (stream.eof()) flag = -1;
+		if (stream.eof()) byte[0] = -1;
 		else
 		{
 			int charNumber = (int)ch;
 			for (int j = 7; j >= 0; j--)
-			{
-				
+			{				
 				byte[j] = (charNumber & 0x1);
-				
 				charNumber >>= 1;
 			}
 		}
