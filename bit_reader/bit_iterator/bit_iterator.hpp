@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <array>
+#include <iterator>
 
-class bit_iterator
+class bit_iterator : public std::iterator<std::input_iterator_tag, int>
 {
 private:
 	std::ifstream &stream;

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <bitset>
 #include <stdint.h>
+#include <vector>
 
 using namespace std;
 
@@ -11,17 +12,17 @@ const int nBits = 32;
 
 int main(int argc, char *argv[])
 {
-	if (argc < 2)
+		if (argc < 2)
 	{
-		std::cout << "Enter file name!" << std::endl;
-		exit(1);
+	std::cout << "Enter file name!" << std::endl;
+	exit(1);
 	}
 	string name(argv[1]);
-
 
 	ifstream f(name, ios::binary);
 	f.exceptions(std::ifstream::badbit);
 	try {
+
 		bit_iterator b(f);
 		int result;
 		do
@@ -39,6 +40,6 @@ int main(int argc, char *argv[])
 	}
 
 
-	
+
 
 }
