@@ -12,10 +12,10 @@ const int nBits = 32;
 
 int main(int argc, char *argv[])
 {
-		if (argc < 2)
+	if (argc < 2)
 	{
-	std::cout << "Enter file name!" << std::endl;
-	exit(1);
+		std::cout << "Enter file name!" << std::endl;
+		exit(1);
 	}
 	string name(argv[1]);
 
@@ -43,3 +43,4 @@ int main(int argc, char *argv[])
 
 
 }
+

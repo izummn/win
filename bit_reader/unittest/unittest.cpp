@@ -41,9 +41,9 @@ public:
 uint32_t swapEndianness(uint32_t bits)
 {
 	return  ((bits >> 24) & 0xff) |    // move byte 3 to byte 0
-			((bits << 8)  & 0xff0000) |    // move byte 1 to byte 2
-			((bits >> 8)  & 0xff00) |     // move byte 2 to byte 1
-			((bits << 24) & 0xff000000);    // byte 0 to byte 3
+		((bits << 8) & 0xff0000) |    // move byte 1 to byte 2
+		((bits >> 8) & 0xff00) |     // move byte 2 to byte 1
+		((bits << 24) & 0xff000000);    // byte 0 to byte 3
 }
 
 
@@ -144,11 +144,4 @@ TEST_CASE(" Test Bit reader: ", "one")
 
 	}
 };
-
-
-
-
-
-
-
 

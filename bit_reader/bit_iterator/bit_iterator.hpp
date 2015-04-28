@@ -47,7 +47,7 @@ public:
 		{
 			int charNumber = (int)ch;
 			for (int j = 7; j >= 0; j--)
-			{				
+			{
 				byte[j] = (charNumber & 0x1);
 				charNumber >>= 1;
 			}
@@ -55,3 +55,8 @@ public:
 	}
 
 };
+
+
+
+
+
