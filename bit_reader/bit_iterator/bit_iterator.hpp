@@ -4,39 +4,43 @@
 #include <iterator>
 #include <vector>
 
-class bit_iterator : public std::iterator <std::input_iterator_tag, int>
+template<class Iterator>
+class bit_iterator :
+	public std::iterator<typename std::iterator_traits<Iterator>::iterator_category, int>
 {
 private:
-	//std::ifstream &stream;
 	int bitCount = 8;
 	std::array <int, 8> byte;
-	std::vector<double>::iterator iter;
-	double* p;
+	Iterator iter;
 
 
 public:
-	//bit_iterator(std::ifstream &p) :stream(p) {}
 
-	bit_iterator(std::vector<double>::iterator _iter) : iter(_iter) {}
-	bit_iterator(double* x) : p(x) {}
+
+	
 
 	bit_iterator& operator++()
 	{
-		++p;
+		
+		++iter;
 		return *this;
 	}
 
-	bit_iterator operator++(int)
+	/*bit_iterator operator++(iter)
 	{
 		bit_iterator tmp(*this);
 		operator++();
 		return tmp;
-	}
+	}*/
 
-	bool operator==(const bit_iterator& rhs) { return p == rhs.p; }
-	bool operator!=(const bit_iterator& rhs) { return p != rhs.p; }
-	double& operator*() { return *p; }
+	bool operator==(const bit_iterator& rhs) { return iter == rhs.iter; }
+	bool operator!=(const bit_iterator& rhs) { return iter != rhs.iter; }
+	int operator*() const { return (*iter » bit_count) & 0x1; }
 	~bit_iterator(){}
+
+
+
+
 
 
 	int readBit()
