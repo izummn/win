@@ -15,50 +15,41 @@ const int nBits = 32;
 template < typename T >
 void reverseT(T first, T last)
 {
-	int n = std::distance(first, last);
 	last--;
-	while (n > 0 )
-	{	
+	while (first != last)
+	{
 		swap(*first, *last);
-		first++;
 		last--;
-		n -= 2;
+		if (first == last) break;
+		first++;
 	}
 }
 
 
-template < typename T >
+template < class T, class ShowType = typename iterator_traits<T>::value_type >
 void showT(T first, T last)
 {
-	std::copy(first, last, std::ostream_iterator<double>(std::cout, " "));	
+	std::copy(first, last, std::ostream_iterator<ShowType>(std::cout, " "));
 }
 
 
-template <typename T1, typename T2>
-ostream &operator<<(ostream &out, pair< T1, T2> p)
+template<class T, class ShowType = typename iterator_traits<T>::value_type>
+ostream &operator<<(ostream &out, const pair<T, T>& p)
 {
-	copy(p.first, p.second, std::ostream_iterator<double>(out, " "));
+	copy(p.first, p.second, std::ostream_iterator<ShowType>(out, " "));
 	return out;
 }
 
 
-template < typename T >
-void show_container(T first, T last)
-{
-	std::vector<std::reference_wrapper<int>> v(first, last);
-	for (int n : v) std::cout << n << ' ';
-	std::cout << '\n';
-}
+//template <class ContainerType, class T, class ShowType = typename iterator_traits<T>::value_type>
+//struct cont
+//{
+//public:
 
-
-template<class T>
-class Call_proxy{
-	T* p;
-public:
-	Call_proxy(T* pp) :p(pp){ }
-	~Call_proxy() { suffix(); }
-	T* operator->() { return p; }
-};
+//pair<T, T> show_container(ContainerType container)
+//{
+	//return make_pair(container.begin(), container.end());
+//}
 
 
 
@@ -67,11 +58,12 @@ int main()
 {
 	cout << endl;
 
-	std::vector<int> i{ 1, 2, 3, 4, 5, 6 };
+	std::vector<int> i{ 1, 2, 3, 4, 5, 6};
 	std::vector<double> d{ 7, 8.1, 3.9, -48.6, 8.5};
 	std::vector<char> c{ 'j', 'f', 'g', 'h', 'k' };
 	std::array<int, 9> a = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	std::list<int> l{ 20, 50, 5, 4, 3, 9 };
+
 
 	cout << " Reverse and show int string: " << endl;
 	showT(i.begin(), i.end());
@@ -80,9 +72,6 @@ int main()
 	showT(i.begin(), i.end());
 	cout << endl;
 	cout << make_pair(i.begin(), i.end()) << endl;
-
-	//Wrapper:
-	show_container(i.begin(), i.end());
 	cout << " *****************************************************" << endl;
 	cout << endl;
 
@@ -96,9 +85,6 @@ int main()
 	showT(d.begin(), d.end());
 	cout << endl;
 	cout << make_pair(d.begin(), d.end()) << endl;
-
-	// Wrapper:
-	//show_container(d.begin(), d.end());
 	cout << " *****************************************************" << endl;
 	cout << endl;
 
@@ -110,6 +96,7 @@ int main()
 	showT(c.begin(), c.end());
 	cout << endl;
 	cout << make_pair(c.begin(), c.end()) << endl;
+
 	cout << " *****************************************************" << endl;
 	cout << endl;
 
@@ -122,6 +109,7 @@ int main()
 	showT(a.begin(), a.end());
 	cout << endl;
 	cout << make_pair(a.begin(), a.end()) << endl;
+
 	cout << " *****************************************************" << endl;
 	cout << endl;
 
