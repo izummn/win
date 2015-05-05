@@ -7,6 +7,7 @@
 #include <list>
 #include <array>
 #include <iterator>
+#include <iomanip>
 
 using namespace std;
 const int nBits = 32;
@@ -15,13 +16,13 @@ const int nBits = 32;
 template < typename T >
 void reverseT(T first, T last)
 {
-	last--;
 	while (first != last)
 	{
-		swap(*first, *last);
 		last--;
 		if (first == last) break;
+		swap(*first, *last);	
 		first++;
+				
 	}
 }
 
@@ -41,17 +42,31 @@ ostream &operator<<(ostream &out, const pair<T, T>& p)
 }
 
 
-//template <class ContainerType, class T, class ShowType = typename iterator_traits<T>::value_type>
-//struct cont
-//{
-//public:
+//***********************************************************************************
 
-//pair<T, T> show_container(ContainerType container)
-//{
-	//return make_pair(container.begin(), container.end());
-//}
+template<class ContainerType> class show_container {
+private:
+
+public:
+	friend ostream& operator<<(ostream&, const show_container<ContainerType>&);
+};
 
 
+template<class ContainerType>
+ostream& operator<<(ostream& out, const show_container<ContainerType>& sc)
+	{
+		copy(sc.first, sc.second, std::ostream_iterator<double>(out, " "));
+		return out;
+	}
+
+
+template<class T, class ContainerType>
+pair<T, T> show_container(ContainerType container)
+{
+	return make_pair(container.begin(), container.end());
+}
+
+//***************************************************************
 
 
 int main()
@@ -63,6 +78,12 @@ int main()
 	std::vector<char> c{ 'j', 'f', 'g', 'h', 'k' };
 	std::array<int, 9> a = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	std::list<int> l{ 20, 50, 5, 4, 3, 9 };
+	std::vector<int> empty{};
+
+
+	cout << "Empty vector: " << endl;
+	reverseT(empty.begin(), empty.end());
+	cout << make_pair(empty.begin(), empty.end()) << endl;
 
 
 	cout << " Reverse and show int string: " << endl;
@@ -74,6 +95,9 @@ int main()
 	cout << make_pair(i.begin(), i.end()) << endl;
 	cout << " *****************************************************" << endl;
 	cout << endl;
+	//show_container(i);
+	cout << show_container(i) << endl;
+
 
 	
 
