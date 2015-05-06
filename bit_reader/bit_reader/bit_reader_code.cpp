@@ -41,31 +41,39 @@ ostream &operator<<(ostream &out, const pair<T, T>& p)
 	return out;
 }
 
-
+template<class T>
+void show(T first, T last)
+{
+	while (first != last)
+	{
+		cout << *first << " ";
+		first++;
+	}
+}
 //***********************************************************************************
 
-template<class ContainerType> class show_container {
+/*template<class show_container_t> class show_container1 {
 private:
 
 public:
-	friend ostream& operator<<(ostream&, const show_container<ContainerType>&);
+	friend ostream& operator<<(ostream&, const show_container1<show_container_t>&);
 };
 
 
 template<class ContainerType>
-ostream& operator<<(ostream& out, const show_container<ContainerType>& sc)
+ostream& operator<<(ostream& out, const show_container1<ContainerType>& sc)
 	{
 		copy(sc.first, sc.second, std::ostream_iterator<double>(out, " "));
 		return out;
 	}
 
 
-template<class T, class ContainerType>
-pair<T, T> show_container(ContainerType container)
+template<class show_container_t, class T>
+pair<T, T> show_container(show_container_t container)
 {
 	return make_pair(container.begin(), container.end());
 }
-
+*/
 //***************************************************************
 
 
@@ -73,7 +81,7 @@ int main()
 {
 	cout << endl;
 
-	std::vector<int> i{ 1, 2, 3, 4, 5, 6};
+	std::vector<int> i{ 1, 2, 3, 4, 5};
 	std::vector<double> d{ 7, 8.1, 3.9, -48.6, 8.5};
 	std::vector<char> c{ 'j', 'f', 'g', 'h', 'k' };
 	std::array<int, 9> a = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -84,6 +92,7 @@ int main()
 	cout << "Empty vector: " << endl;
 	reverseT(empty.begin(), empty.end());
 	cout << make_pair(empty.begin(), empty.end()) << endl;
+	show(empty.begin(), empty.end());
 
 
 	cout << " Reverse and show int string: " << endl;
@@ -95,8 +104,8 @@ int main()
 	cout << make_pair(i.begin(), i.end()) << endl;
 	cout << " *****************************************************" << endl;
 	cout << endl;
-	//show_container(i);
-	cout << show_container(i) << endl;
+	show(i.begin(), i.end());
+
 
 
 	
@@ -146,6 +155,7 @@ int main()
 	showT(l.begin(), l.end());
 	cout << endl;
 	cout << make_pair(l.begin(), l.end()) << endl;
+	show(l.begin(), l.end());
 	cout << " *****************************************************" << endl;
 	cout << endl;
 
