@@ -6,9 +6,12 @@
 
 template<class Iterator>
 class bit_iterator :
-	public std::iterator<typename std::iterator_traits<Iterator>::iterator_category, int>
+	public std::iterator<
+	typename std::iterator_traits<Iterator>::iterator_category,
+	int>
 {
 private:
+	
 	int bitCount = 8;
 	std::array <int, 8> byte;
 	Iterator iter;
@@ -16,30 +19,20 @@ private:
 
 public:
 
-
-	
-
 	bit_iterator& operator++()
 	{
-		
+		if (bit_count == 8 * sizeof(iter))
 		++iter;
 		return *this;
 	}
-
-	/*bit_iterator operator++(iter)
-	{
-		bit_iterator tmp(*this);
-		operator++();
-		return tmp;
-	}*/
-
+	
 	bool operator==(const bit_iterator& rhs) { return iter == rhs.iter; }
 	bool operator!=(const bit_iterator& rhs) { return iter != rhs.iter; }
-	int operator*() const { return (*iter » bit_count) & 0x1; }
+	int operator*() const { return (*iter >> bit_count) & 0x1; }
 	~bit_iterator(){}
 
-
-
+	template <class Container>
+	bit_iterator operator=(Container p) { return iter = p.begin(); }
 
 
 
