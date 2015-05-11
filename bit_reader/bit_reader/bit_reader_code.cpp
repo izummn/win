@@ -14,15 +14,9 @@ const int nBits = 32;
 
 int main()
 {
-	
-	
-
-	std::vector<double> v{ { 7, 8.1, 3.9, -48.6 } };
-	bit_iterator first = v.begin();
-	bit_iterator last = v.end();
-
-	//bit_iterator<double> first = v.begin();
-	//bit_iterator <double> last = v.end();
+	std::vector<int> v{ { 45, 12, 33, 48, 23, 58, 89 } };
+	 bit_iterator<decltype(v.begin())> first(v.begin());
+	 bit_iterator<decltype(v.end())> last(v.end());
 
 	std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
 	std::cout << std::endl;

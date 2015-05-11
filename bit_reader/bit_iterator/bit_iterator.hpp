@@ -12,69 +12,29 @@ class bit_iterator :
 {
 private:
 	
-	int bitCount = 8;
-	std::array <int, 8> byte;
+	int bitCount = 0;
 	Iterator iter;
 
-
 public:
-
+	bit_iterator(Iterator it) : iter(it) {}
 	bit_iterator& operator++()
 	{
-		if (bit_count == 8 * sizeof(iter))
-		++iter;
+		if (bitCount == 8)
+		{
+			++iter;
+			bitCount = 0;
+		//	std::cout << std::endl;
+		}
 		return *this;
-	}
-	
+	}	
 	bool operator==(const bit_iterator& rhs) { return iter == rhs.iter; }
 	bool operator!=(const bit_iterator& rhs) { return iter != rhs.iter; }
-	int operator*() const { return (*iter >> bit_count) & 0x1; }
-	~bit_iterator(){}
-
-	template <class Container>
-	bit_iterator operator=(Container p) { return iter = p.begin(); }
-
-
-
-	int readBit()
-	{
-		if (bitCount <= 6)
-		{
-			bitCount++;
-			return byte[bitCount];
-		}
-		else
-		{
-			readBitFast();
-			if (byte[0] == -1)
-			{
-				return -1;
-			}
-			else
-			{
-				bitCount = 0;
-				return byte[0];
-			}
-		}
-	}
-
-
-	void readBitFast()				//The conclusion from the lower bits
-	{
-		char ch;
-		/*  stream.get(ch);
-		if (stream.eof()) byte[0] = -1;
-		else
-		{
-		int charNumber = (int)ch;
-		for (int j = 7; j >= 0; j--)
-		{
-		byte[j] = (charNumber & 0x1);
-		charNumber >>= 1;
-		}
-		}*/
-	}
-
+	bool operator<(const bit_iterator& rsh)  { return iter < rsh.iter; }
+	typename bit_iterator::value_type operator * ()
+	{ 
+		return (*iter >> (bitCount++)) & 0x1 ;
+	};
+	~bit_iterator(){}	
 };
 
 
