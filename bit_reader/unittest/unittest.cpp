@@ -4,12 +4,15 @@
 #include <fstream>
 #include <bitset>
 #include <bit_iterator.hpp>
-#include <boost\filesystem.hpp>
+#include <boost/filesystem.hpp>
 #include <catch.hpp>
 
 
 	
 		const int nBits = 32;
+		typedef std::istream_iterator<int> it;
+		//typedef std::istreambuf_iterator<int> it;
+
 
 		const std::bitset < nBits > manual("1011100110110000101100100");
 		const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
@@ -34,7 +37,7 @@
 				return path;
 			}
 		};
-
+	
 
 
 
@@ -70,89 +73,97 @@
 				file1.close();
 			}
 
-			std::ifstream file2(fileName.getFilename(), std::ios::binary);
-			bit_iterator bit_object(file2);
+		//	std::ifstream file2(fileName.getFilename(), std::ios::binary);
+			std::ifstream file2("1.txt", std::ios::binary);
+
+			std::vector<int> v((it(file2)), it());
+			bit_iterator<decltype((v.begin()))> first(v.begin());
+			bit_iterator<decltype(v.end())> last(v.end());
+			std::copy(first, last, std::ostream_iterator<int>(std::cout, ""));
 			std::bitset<nBits> temp;
 
-			for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+				/*	for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+					{
+					temp <<= 1;
+					temp |= result & 0x1;
+					}
+
+					file2.close();*/
+
+
+				return temp;
+			};
+
+
+
+			TEST_CASE(" Test Bit reader: ", "one")
 			{
-				temp <<= 1;
-				temp |= result & 0x1;
-			}
 
-			file2.close();
-			return temp;
-		}
+				SECTION(" Manual string: ") {
+					REQUIRE(testBits(manual) == manual);
+				}
 
+				SECTION(" String with 0: ") {
+					REQUIRE(testBits(zeros) == zeros);
+				}
 
+				SECTION(" Random string: ") {
+					REQUIRE(testBits(randoms) == randoms);
+				}
 
-		TEST_CASE(" Test Bit reader: ", "one")
-		{
+				SECTION("  Ones file: ") {
+					REQUIRE(testBits(ones) == ones);
 
-			SECTION(" Manual string: ") {
-				REQUIRE(testBits(manual) == manual);
-			}
+				}
 
-			SECTION(" String with 0: ") {
-				REQUIRE(testBits(zeros) == zeros);
-			}
+				/*SECTION("  Test file with seekg: ") {
 
-			SECTION(" Random string: ") {
-				REQUIRE(testBits(randoms) == randoms);
-			}
+					std::bitset<nBits> b(randoms);
+					uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
 
-			SECTION("  Ones file: ") {
-				REQUIRE(testBits(ones) == ones);
-
-			}
-
-			SECTION("  Test file with seekg: ") {
-
-				std::bitset<nBits> b(randoms);
-				uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
-
-				temprorary_filename fileName;
-				std::ofstream file1(fileName.getFilename(), std::ios::binary);
-				if (file1.is_open())
-				{
+					temprorary_filename fileName;
+					std::ofstream file1(fileName.getFilename(), std::ios::binary);
+					if (file1.is_open())
+					{
 					file1.write(reinterpret_cast<char*>(&t), sizeof(t));
 					file1.close();
-				}
+					}
 
-				std::ifstream file2(fileName.getFilename(), std::ios::binary);
-				bit_iterator bit_object(file2);
-				std::bitset<nBits> temp1;
-				std::bitset<nBits> temp2;
+					std::ifstream file2(fileName.getFilename(), std::ios::binary);
+					bit_iterator bit_object(file2);
+					std::bitset<nBits> temp1;
+					std::bitset<nBits> temp2;
 
-				for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
-				{
+					for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+					{
 					temp1 <<= 1;
 					temp1 |= result & 0x1;
-				}
+					}
 
-				file2.clear();
-				file2.seekg(0);
+					file2.clear();
+					file2.seekg(0);
 
-				for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
-				{
+					for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+					{
 					temp2 <<= 1;
 					temp2 |= result & 0x1;
-				}
-				REQUIRE(temp1 == temp2);
+					}
+					REQUIRE(temp1 == temp2);
 
-			}
+					}
 
-			SECTION("  Empty file: ") {
+					SECTION("  Empty file: ") {
 
-				temprorary_filename fileName;
-				std::ofstream file1(fileName.getFilename());						// this line creates file
-				std::ifstream file2(fileName.getFilename(), std::ios::binary);
-				bit_iterator bit_object(file2);
+					temprorary_filename fileName;
+					std::ofstream file1(fileName.getFilename());						// this line creates file
+					std::ifstream file2(fileName.getFilename(), std::ios::binary);
+					bit_iterator bit_object(file2);
 
-				REQUIRE(bit_object.readBit() == -1);
+					REQUIRE(bit_object.readBit() == -1);
 
-			}
-		};
+					}*/
+			};
+		
 
 
 

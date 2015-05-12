@@ -4,10 +4,11 @@
 #include <iterator>
 #include <vector>
 
+
 template<class Iterator>
 class bit_iterator :
 	public std::iterator<
-	typename std::iterator_traits<Iterator>::iterator_category,
+	typename std::input_iterator_tag,
 	int>
 {
 private:
@@ -19,21 +20,22 @@ public:
 	bit_iterator(Iterator it) : iter(it) {}
 	bit_iterator& operator++()
 	{
-		if (bitCount == 8)
+		bitCount++;
+		if (bitCount == CHAR_BIT * sizeof(decltype(*iter)))
 		{
 			++iter;
 			bitCount = 0;
-		//	std::cout << std::endl;
-		}
+			//std::cout << std::endl;
+		}		
 		return *this;
 	}	
-	bool operator==(const bit_iterator& rhs) { return iter == rhs.iter; }
-	bool operator!=(const bit_iterator& rhs) { return iter != rhs.iter; }
-	bool operator<(const bit_iterator& rsh)  { return iter < rsh.iter; }
-	typename bit_iterator::value_type operator * ()
+	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter; }
+	bool operator!=(const bit_iterator& rhs) const { return !(iter == rhs.iter); }
+	typename bit_iterator::value_type operator * () const
 	{ 
-		return (*iter >> (bitCount++)) & 0x1 ;
+		return (*iter >> bitCount) & 0x1 ;
 	};
+
 	~bit_iterator(){}	
 };
 
