@@ -6,6 +6,7 @@
 #include <bit_iterator.hpp>
 #include <boost/filesystem.hpp>
 #include <catch.hpp>
+#include <algorithm>
 
 
 
@@ -71,14 +72,10 @@ std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
 	}
 
 	std::ifstream file2(fileName.getFilename(), std::ios::binary);
-//	std::ifstream file2("1.txt", std::ios::binary);
 
 
-
-	bit_iterator<std::istreambuf_iterator<int>> first(std::istreambuf_iterator<int>(file2));
-	file2.clear();
-	file2.seekg(0, std::ios::end);
-	bit_iterator<std::istreambuf_iterator<int>> last(std::istreambuf_iterator<int>(file2));
+	bit_iterator<std::istreambuf_iterator<char>> first(std::istreambuf_iterator<char>(file2));
+	bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>());
 
 	std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
 

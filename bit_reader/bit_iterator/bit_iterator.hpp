@@ -19,20 +19,25 @@ private:
 public:
 	bit_iterator(Iterator it) : iter(it) {}
 	bit_iterator() {}
+	bit_iterator(const bit_iterator& obj)
+	{ 
+		iter = new Iterator;
+		*iter = *obj.iter;
+	}
+
 	bit_iterator& operator++()
 	{
 		bitCount++;
-		if (bitCount == (std::numeric_limits<unsigned int>::digits) * sizeof(decltype(*iter)))
-		{
+		if (bitCount == CHAR_BIT * sizeof(decltype(*iter)))
+		{			
 			++iter;
 			bitCount = 0;
-			std::cout << std::endl;
 		}		
 		return *this;
 	}	
 	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter; }
 	bool operator!=(const bit_iterator& rhs) const { return !(iter == rhs.iter); }
-	Iterator *operator=(Iterator *rsh) { return iter(rsh); }
+	
 	typename bit_iterator::value_type operator * () const
 	{ 
 		return (*iter >> bitCount) & 0x1 ;
