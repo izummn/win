@@ -72,12 +72,33 @@ std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
 	}
 
 	std::ifstream file2(fileName.getFilename(), std::ios::binary);
+	//std::ifstream file2("1.txt", std::ios::binary);
+	
+	
+	//bit_iterator<std::istreambuf_iterator<char>> first(std::istreambuf_iterator<char>(file2));	
+	//bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>());
+	//std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
+	// in this case we cannot build project, because  types of arguments std::copy do not conform
 
 
+
+	
 	bit_iterator<std::istreambuf_iterator<char>> first(std::istreambuf_iterator<char>(file2));
-	bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>());
-
+	bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>(file2));
 	std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
+
+	/* In this case we cannot build project, because we have two errors in this implementation:
+	// TEMPLATE FUNCTION copy
+	template<class _InIt,
+	class _OutIt> inline
+	_OutIt _Copy_impl(_InIt _First, _InIt _Last,
+	_OutIt _Dest, _Nonscalar_ptr_iterator_tag)
+	{	// copy [_First, _Last) to [_Dest, ...), arbitrary iterators
+	/////////////////////for (; _First != _Last; ++_Dest, ++_First)
+	/////////////////////*_Dest = *_First;
+	return (_Dest);
+	}
+	*/
 
 
 
