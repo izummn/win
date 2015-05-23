@@ -20,11 +20,17 @@ public:
 	bit_iterator(Iterator it) : iter(it) {}
 	bit_iterator() {}
 
-	bit_iterator(const bit_iterator& obj)	{	iter = obj.iter; }
+	bit_iterator(const bit_iterator& obj)	
+	{	
+		bitCount = obj.bitCount;
+		iter = obj.iter; 
+	}
 
 	bit_iterator& operator++(int)
 	{
-		return iter++;
+		bitCount++;
+		iter++;
+		return *this;
 	}
 
 
@@ -43,10 +49,11 @@ public:
 	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter; }
 	bool operator!=(const bit_iterator& rhs) const { return !(*this == rhs); }
 
-	bit_iterator operator=(const bit_iterator& B)
+	bit_iterator operator=(const bit_iterator& obj)
 	{
-		iter = B.iter;
-		return *this;
+		bitCount = obj.bitCount;
+		iter = obj.iter;
+		return &bit_iterator;
 	}
 
 	typename bit_iterator::value_type operator * () const

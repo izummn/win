@@ -10,7 +10,7 @@
 
 
 
-const int nBits = 32;
+const int nBits = 64;
 
 const std::bitset < nBits > manual("1011100110110000101100100");
 const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
@@ -41,26 +41,20 @@ public:
 
 uint32_t swapEndianness(uint32_t bits)
 {
-	std::bitset<nBits> temp(bits);
-	std::bitset<nBits> result;
-	int k = 0;
-	for (int i = 31; i >= 0; i--)
-	{
-		result[i % 8 + k] = temp[i];
-		if (i % 8 == 0)
-		{
-			k += 8;
-		}
-
-	}
-	return result.to_ulong();
+	return  ((bits >> 24) & 0xff) |    // move byte 3 to byte 0
+		((bits << 8) & 0xff0000) |    // move byte 1 to byte 2
+		((bits >> 8) & 0xff00) |     // move byte 2 to byte 1
+		((bits << 24) & 0xff000000);    // byte 0 to byte 3
 }
+
+
 
 
 std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
 {
 	std::bitset<nBits> b(bitsLine);
-	uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
+	//uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
+	uint64_t t = b.to_ulong();
 
 	temprorary_filename fileName;
 	std::ofstream file1(fileName.getFilename(), std::ios::binary);
@@ -72,39 +66,27 @@ std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
 	}
 
 	std::ifstream file2(fileName.getFilename(), std::ios::binary);
-	//std::ifstream file2("1.txt", std::ios::binary);
-	
-	
-	//bit_iterator<std::istreambuf_iterator<char>> first(std::istreambuf_iterator<char>(file2));	
-	//bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>());
-	//std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
-	// in this case we cannot build project, because  types of arguments std::copy do not conform
+	bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(file2)));
+	bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
+	std::bitset<nBits> temp;
+	std::stringstream s;
 
 
+	std::copy(first, last, std::ostream_iterator<int>(s));
 
-	
-	bit_iterator<std::istreambuf_iterator<char>> first(std::istreambuf_iterator<char>(file2));
-	bit_iterator<std::istreambuf_iterator<char>> last(std::istreambuf_iterator<char>(file2));
-	std::copy(first, last, std::ostream_iterator<int>(std::cout, " "));
+	for (int result = (int)s.get(); !s.eof(); result = (int)s.get())
+	{
+		temp <<= 1;
+		temp |= result & 0x1;
 
-	/* In this case we cannot build project, because we have two errors in this implementation:
-	// TEMPLATE FUNCTION copy
-	template<class _InIt,
-	class _OutIt> inline
-	_OutIt _Copy_impl(_InIt _First, _InIt _Last,
-	_OutIt _Dest, _Nonscalar_ptr_iterator_tag)
-	{	// copy [_First, _Last) to [_Dest, ...), arbitrary iterators
-	/////////////////////for (; _First != _Last; ++_Dest, ++_First)
-	/////////////////////*_Dest = *_First;
-	return (_Dest);
 	}
-	*/
 
-
-
-	std::bitset<nBits> temp;	
+	std::bitset<nBits> reverse_temp;
+	for (int i = 0; i < nBits; i++)
+		reverse_temp[i] = temp[nBits - i - 1];
 	file2.close();
-	return temp;
+
+	return reverse_temp;
 }
 
 
@@ -129,11 +111,11 @@ TEST_CASE(" Test Bit reader: ", "one")
 
 	}
 
-	/*SECTION("  Test file with seekg: ") {
+	SECTION("  Test file with seekg: ") {
 
 		std::bitset<nBits> b(randoms);
-		uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
-
+		//uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
+		uint64_t t = b.to_ulong();
 		temprorary_filename fileName;
 		std::ofstream file1(fileName.getFilename(), std::ios::binary);
 		if (file1.is_open())
@@ -143,29 +125,51 @@ TEST_CASE(" Test Bit reader: ", "one")
 		}
 
 		std::ifstream file2(fileName.getFilename(), std::ios::binary);
-		bit_iterator bit_object(file2);
+		bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(file2)));
+		bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
 		std::bitset<nBits> temp1;
 		std::bitset<nBits> temp2;
+		std::stringstream s1;
 
-		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+
+		std::copy(first, last, std::ostream_iterator<int>(s1));
+
+		for (int result = (int)s1.get(); !s1.eof(); result = (int)s1.get())
 		{
 			temp1 <<= 1;
 			temp1 |= result & 0x1;
+
 		}
+
+		std::bitset<nBits> reverse_temp1;
+		for (int i = 0; i < nBits; i++)
+			reverse_temp1[i] = temp1[nBits - i - 1];
 
 		file2.clear();
 		file2.seekg(0);
 
-		for (int result = bit_object.readBit(); result != -1; result = bit_object.readBit())
+		bit_iterator<std::istreambuf_iterator<char>> first2((std::istreambuf_iterator<char>(file2)));
+		bit_iterator<std::istreambuf_iterator<char>> last2((std::istreambuf_iterator<char>()));
+		std::stringstream s2;
+
+
+		std::copy(first2, last2, std::ostream_iterator<int>(s2));
+
+		for (int result = (int)s2.get(); !s2.eof(); result = (int)s2.get())
 		{
 			temp2 <<= 1;
 			temp2 |= result & 0x1;
+
 		}
-		REQUIRE(temp1 == temp2);
+
+		std::bitset<nBits> reverse_temp2;
+		for (int i = 0; i < nBits; i++)
+			reverse_temp2[i] = temp2[nBits - i - 1];
+		REQUIRE(reverse_temp1 == reverse_temp2);
 
 	}
 
-	SECTION("  Empty file: ") {
+	/*SECTION("  Empty file: ") {
 
 		temprorary_filename fileName;
 		std::ofstream file1(fileName.getFilename());						// this line creates file
