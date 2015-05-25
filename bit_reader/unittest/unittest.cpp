@@ -4,9 +4,18 @@
 #include <fstream>
 #include <bitset>
 #include <bit_iterator.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/dynamic_bitset.hpp>
 #include <catch.hpp>
 #include <algorithm>
+#include <iterator>
+#include <vector>
+#include <stdint.h>
+#include <list>
+#include <array>
+#include <iomanip>
+
+
+
 
 
 
@@ -16,169 +25,67 @@ const std::bitset < nBits > manual("1011100110110000101100100");
 const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
 const std::bitset < nBits > zeros;
 const std::bitset < nBits > randoms(std::rand());
+const std::bitset < 0 >  empty;
 
-class temprorary_filename
+
+
+template<class InputIterator>
+bit_iterator<decltype(InputIterator)> make_bit_iterator(InputIterator iter)
 {
-private:
-	std::string path;
-public:
-	temprorary_filename()
-	{
-		path = boost::filesystem::unique_path().string();
-	}
-	~temprorary_filename()
-	{
-		boost::filesystem::remove(path);
-	}
-	std::string getFilename()
-	{
-		return path;
-	}
+	bit_iterator<decltype(iter)> obj(iter);
+	return obj;
 };
 
 
 
 
-uint32_t swapEndianness(uint32_t bits)
-{
-	return  ((bits >> 24) & 0xff) |    // move byte 3 to byte 0
-		((bits << 8) & 0xff0000) |    // move byte 1 to byte 2
-		((bits >> 8) & 0xff00) |     // move byte 2 to byte 1
-		((bits << 24) & 0xff000000);    // byte 0 to byte 3
-}
+boost::dynamic_bitset<uint8_t> test(std::bitset<nBits> bitsLine)
+   {
+	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
+	std::vector<uint8_t> v;
+	boost::to_block_range(expected, back_inserter(v));
+	boost::dynamic_bitset<uint8_t> output;
 
+	bit_iterator<decltype(v.begin())> first(v.begin());
+	bit_iterator<decltype(v.end())> last(v.end());
+    std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 
-
-
-std::bitset<nBits> testBits(std::bitset<nBits> bitsLine)
-{
-	std::bitset<nBits> b(bitsLine);
-	//uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
-	uint64_t t = b.to_ulong();
-
-	temprorary_filename fileName;
-	std::ofstream file1(fileName.getFilename(), std::ios::binary);
-
-	if (file1.is_open())
-	{
-		file1.write(reinterpret_cast<char*>(&t), sizeof(t));
-		file1.close();
+	//std::for_each(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), [&output](bool x) { output.push_back(x); });
+	return output;
 	}
 
-	std::ifstream file2(fileName.getFilename(), std::ios::binary);
-	bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(file2)));
-	bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
-	std::bitset<nBits> temp;
-	std::stringstream s;
-
-
-	std::copy(first, last, std::ostream_iterator<int>(s));
-
-	for (int result = (int)s.get(); !s.eof(); result = (int)s.get())
+boost::dynamic_bitset<uint8_t> test_preparation(std::bitset<nBits> bitsLine)
 	{
-		temp <<= 1;
-		temp |= result & 0x1;
-
+	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
+	return expected;
 	}
-
-	std::bitset<nBits> reverse_temp;
-	for (int i = 0; i < nBits; i++)
-		reverse_temp[i] = temp[nBits - i - 1];
-	file2.close();
-
-	return reverse_temp;
-}
-
 
 
 TEST_CASE(" Test Bit reader: ", "one")
 {
 
 	SECTION(" Manual string: ") {
-		REQUIRE(testBits(manual) == manual);
+		REQUIRE(test(manual) == test_preparation(manual));
 	}
 
 	SECTION(" String with 0: ") {
-		REQUIRE(testBits(zeros) == zeros);
+		REQUIRE(test(zeros) == test_preparation(zeros));
 	}
 
 	SECTION(" Random string: ") {
-		REQUIRE(testBits(randoms) == randoms);
+		REQUIRE(test(randoms) == test_preparation(randoms));
 	}
 
 	SECTION("  Ones file: ") {
-		REQUIRE(testBits(ones) == ones);
-
-	}
-
-	SECTION("  Test file with seekg: ") {
-
-		std::bitset<nBits> b(randoms);
-		//uint32_t t = swapEndianness(static_cast <uint32_t>(b.to_ulong()));
-		uint64_t t = b.to_ulong();
-		temprorary_filename fileName;
-		std::ofstream file1(fileName.getFilename(), std::ios::binary);
-		if (file1.is_open())
-		{
-			file1.write(reinterpret_cast<char*>(&t), sizeof(t));
-			file1.close();
-		}
-
-		std::ifstream file2(fileName.getFilename(), std::ios::binary);
-		bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(file2)));
-		bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
-		std::bitset<nBits> temp1;
-		std::bitset<nBits> temp2;
-		std::stringstream s1;
-
-
-		std::copy(first, last, std::ostream_iterator<int>(s1));
-
-		for (int result = (int)s1.get(); !s1.eof(); result = (int)s1.get())
-		{
-			temp1 <<= 1;
-			temp1 |= result & 0x1;
-
-		}
-
-		std::bitset<nBits> reverse_temp1;
-		for (int i = 0; i < nBits; i++)
-			reverse_temp1[i] = temp1[nBits - i - 1];
-
-		file2.clear();
-		file2.seekg(0);
-
-		bit_iterator<std::istreambuf_iterator<char>> first2((std::istreambuf_iterator<char>(file2)));
-		bit_iterator<std::istreambuf_iterator<char>> last2((std::istreambuf_iterator<char>()));
-		std::stringstream s2;
-
-
-		std::copy(first2, last2, std::ostream_iterator<int>(s2));
-
-		for (int result = (int)s2.get(); !s2.eof(); result = (int)s2.get())
-		{
-			temp2 <<= 1;
-			temp2 |= result & 0x1;
-
-		}
-
-		std::bitset<nBits> reverse_temp2;
-		for (int i = 0; i < nBits; i++)
-			reverse_temp2[i] = temp2[nBits - i - 1];
-		REQUIRE(reverse_temp1 == reverse_temp2);
+		REQUIRE(test(ones) == test_preparation(ones));
 
 	}
 
 	/*SECTION("  Empty file: ") {
-
-		temprorary_filename fileName;
-		std::ofstream file1(fileName.getFilename());						// this line creates file
-		std::ifstream file2(fileName.getFilename(), std::ios::binary);
-		bit_iterator bit_object(file2);
-
-		REQUIRE(bit_object.readBit() == -1);
-
+		REQUIRE(test(empty) == test_preparation(empty));
+		
 	}*/
+
 };
 
 

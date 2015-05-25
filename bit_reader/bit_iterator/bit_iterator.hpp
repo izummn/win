@@ -26,11 +26,11 @@ public:
 		iter = obj.iter; 
 	}
 
-	bit_iterator& operator++(int)
+	bit_iterator operator++(int)
 	{
-		bitCount++;
-		iter++;
-		return *this;
+		bit_iterator result(*this);
+		++(*this);
+		return result;
 	}
 
 
@@ -49,11 +49,11 @@ public:
 	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter; }
 	bool operator!=(const bit_iterator& rhs) const { return !(*this == rhs); }
 
-	bit_iterator operator=(const bit_iterator& obj)
+	bit_iterator& operator=(const bit_iterator& obj)
 	{
 		bitCount = obj.bitCount;
 		iter = obj.iter;
-		return &bit_iterator;
+		return *this;
 	}
 
 	typename bit_iterator::value_type operator * () const
@@ -63,16 +63,9 @@ public:
 
 	~bit_iterator(){}
 
-
-	//friend std::ostream &operator << (std::ostream &output, const bit_iterator &obj);
 };
 
-/*std::ostream &operator << (std::ostream &out, const bit_iterator<std::istreambuf_iterator<char>> &obj)
-	{
-		out << obj.iter;
-		return out;
-	}
-	*/
+
 
 
 
