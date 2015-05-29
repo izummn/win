@@ -17,13 +17,17 @@
 #include <sstream>
 
 
-const int nBits = 64;
+const int nBits = 32;
 
 const std::bitset < nBits > manual("1011100110110000101100100");
 const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
 const std::bitset < nBits > zeros;
 const std::bitset < nBits > randoms(std::rand());
-const std::bitset < 0 >  empty;
+const std::bitset < nBits >  empty;
+const std::bitset < 0 >  empty1;
+
+
+
 
 
 
@@ -33,7 +37,6 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset_vector(std::bitset<nBits> bitsL
 	std::vector<uint8_t> v;
 	boost::to_block_range(expected, back_inserter(v));
 	boost::dynamic_bitset<uint8_t> output;
-
 	bit_iterator<decltype(v.begin())> first(v.begin());
 	bit_iterator<decltype(v.end())> last(v.end());
     std::for_each(first, last, [&output](bool x) { output.push_back(x); });
@@ -60,42 +63,57 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset_list(std::bitset<nBits> bitsLin
 	return output;
 }
 
-boost::dynamic_bitset<uint8_t> to_dynamic_bitset_empty()
+std::bitset<nBits> to_empty()
 {
-	boost::dynamic_bitset<uint8_t> expected;
 	std::vector<uint8_t> v;
-	boost::dynamic_bitset<uint8_t> output;
-
+	std::string out;
 	bit_iterator<decltype(v.begin())> first(v.begin());
 	bit_iterator<decltype(v.end())> last(v.end());
-	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	std::for_each(first, last, [&out](bool x) { out.push_back(x); });
+	std::bitset<nBits> output(out);
 	return output;
 }
 
-boost::dynamic_bitset<uint8_t> expected_string_empty()
+
+
+uint32_t swapEndianness(uint32_t bits)
 {
-	boost::dynamic_bitset<uint8_t> expected;
-	return expected;
+	return  ((bits >> 24) & 0xff) |    // move byte 3 to byte 0
+		((bits << 8) & 0xff0000) |    // move byte 1 to byte 2
+		((bits >> 8) & 0xff00) |     // move byte 2 to byte 1
+		((bits << 24) & 0xff000000);    // byte 0 to byte 3
 }
 
 
-/*boost::dynamic_bitset<uint8_t> to_dynamic_bitset_forward_list(std::bitset<nBits> bitsLine)
+boost::dynamic_bitset<uint8_t> to_dynamic_bitset_forward_list(std::bitset<nBits> bitsLine)
 {
-	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
+	std::bitset<nBits> temp(swapEndianness(bitsLine.to_ulong()));
+	boost::dynamic_bitset<uint8_t> expected(temp.to_string());
 	std::forward_list<uint8_t> l;
-	boost::to_block_range(expected, );
+	boost::to_block_range(expected, front_inserter(l));
 	boost::dynamic_bitset<uint8_t> output;
 
 	bit_iterator<decltype(l.begin())> first(l.begin());
 	bit_iterator<decltype(l.end())> last(l.end());
 	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 	return output;
-}*/
+}
+
+boost::dynamic_bitset<uint8_t> to_dynamic_bitset_istream(std::bitset<nBits> bitsLine)
+{
+	boost::dynamic_bitset<uint8_t> output;
+	std::stringstream s; // (std::ios::binary);
+	s << bitsLine;
+	bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(s)));
+	bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
+	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	return output;
+}
 
 
 
 
-TEST_CASE(" Test Bit reader: ", "one")
+TEST_CASE(" Test Bit reader: vector ", "¹1")
 {
 
 	SECTION(" Manual string: ") {
@@ -114,7 +132,10 @@ TEST_CASE(" Test Bit reader: ", "one")
 		REQUIRE(to_dynamic_bitset_vector(ones) == expected_string(ones));
 
 	}
+};
 
+TEST_CASE(" Test Bit reader: list ", "¹2")
+{
 	SECTION(" Manual string: ") {
 		REQUIRE(to_dynamic_bitset_list(manual) == expected_string(manual));
 	}
@@ -131,34 +152,83 @@ TEST_CASE(" Test Bit reader: ", "one")
 		REQUIRE(to_dynamic_bitset_list(ones) == expected_string(ones));
 
 	}
+};
 
-	SECTION("  Empty file: ") {
-		REQUIRE(to_dynamic_bitset_empty() == expected_string_empty());
+TEST_CASE(" Test Bit reader: forward_list ", "¹3")
+{
 
+		SECTION(" Manual string: ") {
+			REQUIRE(to_dynamic_bitset_forward_list(manual) == expected_string(manual));
+		}
 
-	/*SECTION(" Manual string: ") {
-		REQUIRE(to_dynamic_bitset_forward_list(manual) == expected_string(manual));
-	}
+		SECTION(" String with 0: ") {
+			REQUIRE(to_dynamic_bitset_forward_list(zeros) == expected_string(zeros));
+		}
 
-	SECTION(" String with 0: ") {
-		REQUIRE(to_dynamic_bitset_forward_list(zeros) == expected_string(zeros));
-	}
+		SECTION(" Random string: ") {
+			REQUIRE(to_dynamic_bitset_forward_list(randoms) == expected_string(randoms));
+		}
 
-	SECTION(" Random string: ") {
-		REQUIRE(to_dynamic_bitset_forward_list(randoms) == expected_string(randoms));
-	}
+		SECTION("  Ones file: ") {
+			REQUIRE(to_dynamic_bitset_forward_list(ones) == expected_string(ones));
 
-	SECTION("  Ones file: ") {
-		REQUIRE(to_dynamic_bitset_forward_list(ones) == expected_string(ones));
-
-	}
-	*/
-
-	
-		
-	}
+		}
 
 };
+
+
+	TEST_CASE(" Test Bit reader: istream ", "¹4")
+	{
+		SECTION(" Manual string: ") {
+			REQUIRE(to_dynamic_bitset_istream(manual) == expected_string(manual));
+		}
+
+		SECTION(" String with 0: ") {
+			REQUIRE(to_dynamic_bitset_istream(zeros) == expected_string(zeros));
+		}
+
+		SECTION(" Random string: ") {
+			REQUIRE(to_dynamic_bitset_istream(randoms) == expected_string(randoms));
+		}
+
+		SECTION("  Ones file: ") {
+			REQUIRE(to_dynamic_bitset_istream(ones) == expected_string(ones));
+		}
+
+};
+
+
+	TEST_CASE(" Test Bit reader: additional ", "¹5")
+	{
+
+		SECTION("  Empty container: ") {
+			REQUIRE(to_empty() == empty);
+		}
+
+		SECTION("  Empty constructor: ") {
+			bit_iterator<std::istreambuf_iterator<char>> first;
+			bit_iterator<std::istreambuf_iterator<char>> last;
+			REQUIRE(first == last);
+		}
+
+		SECTION("  operator = : ") {
+
+			boost::dynamic_bitset<uint8_t> expected(manual.to_string());
+			std::vector<uint8_t> v;
+			boost::to_block_range(expected, back_inserter(v));
+			boost::dynamic_bitset<uint8_t> output;
+			bit_iterator<decltype(v.begin())> first(v.begin());
+			bit_iterator<decltype(v.end())> last(v.end());
+			last = first;
+			REQUIRE(first == last);
+		}
+
+     /*	SECTION("  operator ++(int) : ") {
+
+			REQUIRE( == );
+		}
+		*/
+	};
 
 
 
