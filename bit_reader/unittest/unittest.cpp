@@ -28,20 +28,19 @@ const std::bitset < 0 >  empty1;
 
 
 
-
-
-
-boost::dynamic_bitset<uint8_t> to_dynamic_bitset_vector(std::bitset<nBits> bitsLine)
-   {
+template<class Container>
+boost::dynamic_bitset<uint8_t> to_dynamic_bitset(Container v, std::bitset<nBits> bitsLine)
+{
 	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
-	std::vector<uint8_t> v;
+	
 	boost::to_block_range(expected, back_inserter(v));
 	boost::dynamic_bitset<uint8_t> output;
 	bit_iterator<decltype(v.begin())> first(v.begin());
 	bit_iterator<decltype(v.end())> last(v.end());
-    std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 	return output;
 	}
+
 
 boost::dynamic_bitset<uint8_t> expected_string(std::bitset<nBits> bitsLine)
 	{
@@ -49,19 +48,6 @@ boost::dynamic_bitset<uint8_t> expected_string(std::bitset<nBits> bitsLine)
 	return expected;
 	}
 
-
-boost::dynamic_bitset<uint8_t> to_dynamic_bitset_list(std::bitset<nBits> bitsLine)
-{
-	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
-	std::list<uint8_t> l;
-	boost::to_block_range(expected, back_inserter(l));
-	boost::dynamic_bitset<uint8_t> output;
-
-	bit_iterator<decltype(l.begin())> first(l.begin());
-	bit_iterator<decltype(l.end())> last(l.end());
-	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
-	return output;
-}
 
 std::bitset<nBits> to_empty()
 {
@@ -111,45 +97,45 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset_istream(std::bitset<nBits> bits
 }
 
 
-
-
 TEST_CASE(" Test Bit reader: vector ", "¹1")
 {
+	std::vector<uint8_t> v;
 
 	SECTION(" Manual string: ") {
-		REQUIRE(to_dynamic_bitset_vector(manual) == expected_string(manual));
+		REQUIRE(to_dynamic_bitset(v, manual) == expected_string(manual));
 	}
 
 	SECTION(" String with 0: ") {
-		REQUIRE(to_dynamic_bitset_vector(zeros) == expected_string(zeros));
+		REQUIRE(to_dynamic_bitset(v, zeros) == expected_string(zeros));
 	}
 
 	SECTION(" Random string: ") {
-		REQUIRE(to_dynamic_bitset_vector(randoms) == expected_string(randoms));
+		REQUIRE(to_dynamic_bitset(v, randoms) == expected_string(randoms));
 	}
 
 	SECTION("  Ones file: ") {
-		REQUIRE(to_dynamic_bitset_vector(ones) == expected_string(ones));
+		REQUIRE(to_dynamic_bitset(v, ones) == expected_string(ones));
 
 	}
 };
 
 TEST_CASE(" Test Bit reader: list ", "¹2")
 {
+	std::list<uint8_t> l;
 	SECTION(" Manual string: ") {
-		REQUIRE(to_dynamic_bitset_list(manual) == expected_string(manual));
+		REQUIRE(to_dynamic_bitset(l, manual) == expected_string(manual));
 	}
 
 	SECTION(" String with 0: ") {
-		REQUIRE(to_dynamic_bitset_list(zeros) == expected_string(zeros));
+		REQUIRE(to_dynamic_bitset(l, zeros) == expected_string(zeros));
 	}
 
 	SECTION(" Random string: ") {
-		REQUIRE(to_dynamic_bitset_list(randoms) == expected_string(randoms));
+		REQUIRE(to_dynamic_bitset(l, randoms) == expected_string(randoms));
 	}
 
 	SECTION("  Ones file: ") {
-		REQUIRE(to_dynamic_bitset_list(ones) == expected_string(ones));
+		REQUIRE(to_dynamic_bitset(l, ones) == expected_string(ones));
 
 	}
 };
