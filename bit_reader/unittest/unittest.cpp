@@ -35,9 +35,7 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset(Container v, std::bitset<nBits>
 	
 	boost::to_block_range(expected, back_inserter(v));
 	boost::dynamic_bitset<uint8_t> output;
-	bit_iterator<decltype(v.begin())> first(v.begin());
-	bit_iterator<decltype(v.end())> last(v.end());
-	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	std::for_each(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), [&output](bool x) { output.push_back(x); });
 	return output;
 	}
 
@@ -47,18 +45,6 @@ boost::dynamic_bitset<uint8_t> expected_string(std::bitset<nBits> bitsLine)
 	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
 	return expected;
 	}
-
-
-std::bitset<nBits> to_empty()
-{
-	std::vector<uint8_t> v;
-	std::string out;
-	bit_iterator<decltype(v.begin())> first(v.begin());
-	bit_iterator<decltype(v.end())> last(v.end());
-	std::for_each(first, last, [&out](bool x) { out.push_back(x); });
-	std::bitset<nBits> output(out);
-	return output;
-}
 
 
 
@@ -71,25 +57,24 @@ uint32_t swapEndianness(uint32_t bits)
 }
 
 
-boost::dynamic_bitset<uint8_t> to_dynamic_bitset_forward_list(std::bitset<nBits> bitsLine)
+boost::dynamic_bitset<uint8_t> to_dynamic_bitset(std::bitset<nBits> bitsLine)
 {
 	std::bitset<nBits> temp(swapEndianness(bitsLine.to_ulong()));
-	boost::dynamic_bitset<uint8_t> expected(temp.to_string());
 	std::forward_list<uint8_t> l;
+	boost::dynamic_bitset<uint8_t> expected(temp.to_string());
+	
 	boost::to_block_range(expected, front_inserter(l));
 	boost::dynamic_bitset<uint8_t> output;
-
-	bit_iterator<decltype(l.begin())> first(l.begin());
-	bit_iterator<decltype(l.end())> last(l.end());
-	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	std::for_each(make_bit_iterator(l.begin()), make_bit_iterator(l.end()), [&output](bool x) { output.push_back(x); });
 	return output;
 }
 
 boost::dynamic_bitset<uint8_t> to_dynamic_bitset_istream(std::bitset<nBits> bitsLine)
 {
 	boost::dynamic_bitset<uint8_t> output;
-	std::stringstream s; // (std::ios::binary);
-	s << bitsLine;
+
+	std::istringstream s(std::ios::binary);
+	s.str(bitsLine.to_string());
 	bit_iterator<std::istreambuf_iterator<char>> first((std::istreambuf_iterator<char>(s)));
 	bit_iterator<std::istreambuf_iterator<char>> last((std::istreambuf_iterator<char>()));
 	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
@@ -142,21 +127,20 @@ TEST_CASE(" Test Bit reader: list ", "¹2")
 
 TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 {
-
 		SECTION(" Manual string: ") {
-			REQUIRE(to_dynamic_bitset_forward_list(manual) == expected_string(manual));
+			REQUIRE(to_dynamic_bitset( manual) == expected_string(manual));
 		}
 
 		SECTION(" String with 0: ") {
-			REQUIRE(to_dynamic_bitset_forward_list(zeros) == expected_string(zeros));
+			REQUIRE(to_dynamic_bitset(zeros) == expected_string(zeros));
 		}
 
 		SECTION(" Random string: ") {
-			REQUIRE(to_dynamic_bitset_forward_list(randoms) == expected_string(randoms));
+			REQUIRE(to_dynamic_bitset(randoms) == expected_string(randoms));
 		}
 
 		SECTION("  Ones file: ") {
-			REQUIRE(to_dynamic_bitset_forward_list(ones) == expected_string(ones));
+			REQUIRE(to_dynamic_bitset(ones) == expected_string(ones));
 
 		}
 
@@ -188,7 +172,9 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 	{
 
 		SECTION("  Empty container: ") {
-			REQUIRE(to_empty() == empty);
+			std::vector<uint8_t> v;
+			auto f = make_bit_iterator(v.begin()),  l = make_bit_iterator(v.end());		
+			REQUIRE(f == l);
 		}
 
 		SECTION("  Empty constructor: ") {
@@ -202,18 +188,27 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 			boost::dynamic_bitset<uint8_t> expected(manual.to_string());
 			std::vector<uint8_t> v;
 			boost::to_block_range(expected, back_inserter(v));
-			boost::dynamic_bitset<uint8_t> output;
-			bit_iterator<decltype(v.begin())> first(v.begin());
-			bit_iterator<decltype(v.end())> last(v.end());
-			last = first;
-			REQUIRE(first == last);
+			auto f = make_bit_iterator(v.begin()), l = make_bit_iterator(v.end());
+			f = l;
+			REQUIRE(f == l);
 		}
 
-     /*	SECTION("  operator ++(int) : ") {
-
-			REQUIRE( == );
+     	SECTION("  operator ++(int) : ") {
+			std::vector<uint8_t> v{ { 1, 2, 0, 5 } };
+			auto first = make_bit_iterator(v.begin());
+			auto last = make_bit_iterator(v.end());
+			//std::reverse(first, last);
+			auto second = first; 
+			second++;
+			auto p = second;
+				
+			
+			REQUIRE(first != p);
+			REQUIRE(distance(first, last) == CHAR_BIT * v.size());
+			std::advance(first, 1);
+			REQUIRE(first == second);
 		}
-		*/
+		
 	};
 
 

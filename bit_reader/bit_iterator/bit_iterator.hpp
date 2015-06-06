@@ -28,9 +28,9 @@ public:
 
 	bit_iterator operator++(int)
 	{
-		std::cout << " ++(int) " << std::endl;
 		bit_iterator result(*this);
 		++(*this);
+	//	iter++;
 		return result;
 	}
 
@@ -42,12 +42,14 @@ public:
 		{
 			++iter;
 			bitCount = 0;
-		}
+		} 
+		
 		return *this;
 	}
 
 
-	bool operator==(const bit_iterator& rhs) const {  return iter == rhs.iter; }
+	bool operator==(const bit_iterator& rhs) const {return iter == rhs.iter;}
+
 	bool operator!=(const bit_iterator& rhs) const {  return !(*this == rhs); }
 
 	bit_iterator& operator=(const bit_iterator& obj)
@@ -63,18 +65,15 @@ public:
 	};
 
 	~bit_iterator(){}
-	
-//	friend bit_iterator<> make_bit_iterator(Iterator);
-
 
 };
 
-
-/*bit_iterator<> make_bit_iterator(Iterator iter)
+template<class iterator>
+bit_iterator<iterator> make_bit_iterator(iterator it)
 {
-	bit_iterator<iter> obj(iter);
-return obj;
-};*/
+	bit_iterator<decltype(it)> obj(it);
+	return obj;
+};
 
 
 
