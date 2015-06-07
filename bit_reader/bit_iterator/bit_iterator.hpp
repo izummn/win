@@ -30,7 +30,6 @@ public:
 	{
 		bit_iterator result(*this);
 		++(*this);
-	//	iter++;
 		return result;
 	}
 
@@ -48,9 +47,10 @@ public:
 	}
 
 
-	bool operator==(const bit_iterator& rhs) const {return iter == rhs.iter;}
+	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter &  bitCount == rhs.bitCount; }
 
 	bool operator!=(const bit_iterator& rhs) const {  return !(*this == rhs); }
+	
 
 	bit_iterator& operator=(const bit_iterator& obj)
 	{
