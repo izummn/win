@@ -20,7 +20,7 @@
 const int nBits = 64;
 
 const std::bitset < nBits > manual("1011100110110000101100100");
-const std::bitset < nBits > ones(std::numeric_limits<uint32_t>::max());
+const std::bitset < nBits > ones(std::numeric_limits<uint64_t>::max());
 const std::bitset < nBits > zeros;
 const std::bitset < nBits > randoms(std::rand());
 const std::bitset < nBits >  empty;
@@ -43,10 +43,11 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset(std::bitset<nBits> bitsLine)
 template<>
 boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::forward_list<uint8_t>>(std::bitset<nBits> bitsLine)
 {
-	std::string s = bitsLine.to_string();
+	std::string s = bitsLine.to_string();	
 	for (int i = 0; i <= nBits - CHAR_BIT; i += CHAR_BIT)
 	std::reverse(std::begin(s) + i, std::begin(s) + i + CHAR_BIT);
 	std::reverse(std::begin(s), std::end(s));
+	
 
 	std::forward_list<uint8_t> l;
 	boost::dynamic_bitset<uint8_t> expected(s);

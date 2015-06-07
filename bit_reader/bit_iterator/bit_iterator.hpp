@@ -47,7 +47,7 @@ public:
 	}
 
 
-	bool operator==(const bit_iterator& rhs) const { return iter == rhs.iter &  bitCount == rhs.bitCount; }
+	bool operator==(const bit_iterator& rhs) const { return (iter == rhs.iter) &&  (bitCount == rhs.bitCount); }
 
 	bool operator!=(const bit_iterator& rhs) const {  return !(*this == rhs); }
 	
