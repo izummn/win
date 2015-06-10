@@ -1,4 +1,4 @@
-#include <bit_iterator.hpp>
+﻿#include <bit_iterator.hpp>
 #include <fstream>
 #include <iostream>
 #include <bitset>
@@ -6,41 +6,13 @@
 #include <vector>
 
 using namespace std;
+const int nBits = 64;
 
-const int nBits = 32;
-
-
-int main(int argc, char *argv[])
+int main()
 {
-	if (argc < 2)
-	{
-		std::cout << "Enter file name!" << std::endl;
-		exit(1);
-	}
-	string name(argv[1]);
-
-	ifstream f(name, ios::binary);
-	f.exceptions(std::ifstream::badbit);
-	try {
-
-		bit_iterator b(f);
-		int result;
-		do
-		{
-			result = b.readBit();
-			if (result == -1) break;
-			cout << result;
-		} while (result != -1);
-		return 0;
-	}
-
-	catch (std::ifstream::failure &e)
-	{
-		std::cout << "Exception opening/reading/closing file\n";
-	}
-
-
-
-
+	std::vector<int> v{ { 45, -12, 33, -48, 23, 58, 89 } };
+	std::copy(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), std::ostream_iterator<int>(std::cout, " "));
+	std::cout << std::endl;
+	return 0;
 }
 
