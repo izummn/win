@@ -19,7 +19,6 @@ private:
 public:
 	bit_iterator(Iterator it) : iter(it) {}
 	bit_iterator(){}
-
 	bit_iterator(const bit_iterator& obj)	
 	{	
 		bitCount = obj.bitCount;
@@ -42,7 +41,6 @@ public:
 			++iter;
 			bitCount = 0;
 		} 
-		
 		return *this;
 	}
 
@@ -51,7 +49,6 @@ public:
 
 	bool operator!=(const bit_iterator& rhs) const {  return !(*this == rhs); }
 	
-
 	bit_iterator& operator=(const bit_iterator& obj)
 	{
 		bitCount = obj.bitCount;
