@@ -27,6 +27,12 @@ const std::bitset < nBits > randoms(std::rand());
 const std::bitset < nBits >  empty;
 
 
+/*template< class Iterator>
+class out_iterator : public std::iterator < std::output_iterator_tag, int >
+{
+private:
+	
+};*/
 
 
 template<class Container>
@@ -39,6 +45,7 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset(std::bitset<nBits> bitsLine)
 	boost::dynamic_bitset<uint8_t> output;
 	std::for_each(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), [&output](bool x) { output.push_back(x); });
 	return output;
+
 	}
 
 template<>
@@ -82,6 +89,15 @@ boost::dynamic_bitset<uint8_t> expected_string(std::bitset<nBits> bitsLine)
 	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
 	return expected;
 	}
+
+
+
+std::bitset<nBits> to_output_iterator(std::bitset<nBits> bitsLine)
+{
+	boost::dynamic_bitset<uint8_t> l(to_dynamic_bitset<std::vector<uint8_t>>(manual));
+	std::bitset<nBits> temp(l.to_ulong());
+	return temp;
+}
 
 
 
@@ -210,4 +226,13 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 		}
 		
 	};
+
+	TEST_CASE(" Reverce task", "¹6")
+	{
+
+		SECTION(" For manual string: ") {
+			REQUIRE(to_output_iterator(manual) == manual);
+		}
+	};
+
 
