@@ -18,5 +18,8 @@
     <ClInclude Include="bit_iterator.hpp">
       <Filter>Файлы исходного кода</Filter>
     </ClInclude>
+    <ClInclude Include="obit_iterator.hpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
