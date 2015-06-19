@@ -5,27 +5,26 @@
 #include <vector>
 
 template <class oIterator>
-class obit_iterator : public std::iterator <typename std::output_iterator_tag, int>
+class obit_iterator : public std::iterator <typename std::output_iterator_tag, bool>
 
 {
 private:
 	oIterator iter;
 public:
 	obit_iterator(oIterator it) : iter(it) {}
-	obit_iterator(const obit_iterator& obj) { iter = obj.iter; }
-	obit_iterator(){}
-	~obit_iterator(){}
+	obit_iterator(bool it) { *iter = it; }
+	obit_iterator() {}
+	~obit_iterator() {}
 
 	obit_iterator& operator++() 
 	{
 		++iter;
-		return this;
+		return *this;
 	}
 
 	obit_iterator operator++(int)
 	{
-		obit_iterator temp;
-		temp = this;
+		obit_iterator temp(*this);
 		iter++;
 		return temp;
 	}
@@ -36,14 +35,13 @@ public:
 
 	obit_iterator operator*() const
 	{
-		return *iter;
+		return *this;
 	};
 
-	obit_iterator& operator = (const obit_iterator& obj)
+	obit_iterator& operator = (bool it)
 	{
-		iter = obj.iter;
-		return this;
+		*iter = it;
+		return *this;
 	}
-
 
 };

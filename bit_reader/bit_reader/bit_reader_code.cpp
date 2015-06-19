@@ -18,14 +18,21 @@ int main()
 	std::vector<uint8_t> p;      //{ { 5, 4, 6 } };
 	obit_iterator<decltype(back_inserter(p))>  b(back_inserter(p));
 	
-	// *b++
-	// b = false;
-
-
 	 *b++ = false;
 	 *b = true;
 
+	 for (int i = 0; i < p.size(); i++)
+		 std::cout << p[i] << " p ";
 
+	/*vector<int> l{ { 0, 7 } };
+	auto it = l.begin() + 1;
+	*it = 9;
+	obit_iterator<decltype(back_inserter(l))>  x(back_inserter(l));
+	// l == {{ 0, 9 }}
+	x++;
+	for (int i = 0; i < l.size(); i++)
+		std::cout << l[i] << " l ";*/
+	 
 	return 0;
 }
 

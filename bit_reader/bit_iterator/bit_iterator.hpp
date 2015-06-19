@@ -10,7 +10,7 @@ template<class Iterator>
 class bit_iterator :
 	public std::iterator <
 	typename std::input_iterator_tag,
-	int >
+	bool >
 {
 private:
 
