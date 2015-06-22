@@ -15,14 +15,16 @@ int main()
 	std::copy(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), std::ostream_iterator<int>(std::cout, " "));
 	std::cout << std::endl;
 
-	std::vector<int> p;      //{ { 5, 4, 6 } };
-	proxy_obit_iterator<decltype(back_inserter(p))>  b(back_inserter(p));
-	
-	 *b++ = false;
-	// *b = true;
+	std::vector<int> p;
+	obit_iterator<decltype(back_inserter(p))>  b(back_inserter(p));
 
-	 for (int i = 0; i < p.size(); i++)
-		 std::cout << p[i] << " p ";
+	//proxy p(b); // это возвращает *b
+	//p = false;
+	*b++ = false;
+	 *b = true;
+
+	/* for (int i = 0; i < p.size(); i++)
+		 std::cout << p[i] << " p ";*/
 
 	/*vector<int> l{ { 0, 7 } };
 	auto it = l.begin() + 1;
