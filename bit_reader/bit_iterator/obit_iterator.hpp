@@ -6,31 +6,33 @@
 
 
 
- 
-
 template <class T>
-class proxy {
-private:
-	T p;
-	
-public:
-	proxy() {}
-	proxy(const T v) : proxy(v) {}
-	proxy(const proxy& v) { p = v; }
-
-	proxy& operator = (const proxy&);
-	operator bool() const;
-	~proxy();
-	proxy& operator = (bool x);
-};
+class proxy;
 
 
 template <class oIterator>
-class obit_iterator : public std::iterator <typename std::output_iterator_tag, proxy<obit_iterator<oIterator>>>
+class obit_iterator : public std::iterator <typename std::output_iterator_tag, proxy<oIterator>>
 
 {
 private:
 	oIterator iter;
+
+	template <class T>
+	class proxy {
+	private:
+		T& p;
+		proxy() {}
+		proxy(T v) : p(v) {}
+		proxy(const proxy& v) { p = v.p; }
+		
+	public:
+		proxy& operator = (const proxy&);
+		operator bool() const;
+		~proxy();
+		proxy& operator = (bool x);
+	};
+
+//	proxy<??> m;
 
 	
 
@@ -59,7 +61,9 @@ public:
 	proxy<oIterator> operator*() //const
 	{
 		proxy<decltype(*this)> p(*this);
-		return &p;
+		
+		//return m(*this);
+		return p;
 	}
 
 	obit_iterator& operator = (const obit_iterator& obj)
