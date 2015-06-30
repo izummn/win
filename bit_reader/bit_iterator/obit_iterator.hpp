@@ -5,37 +5,31 @@
 #include <vector>
 
 
-
 template <class T>
-class proxy;
+class proxy {
+private:
+	T& p;
+	proxy(T& v) : p(v) {}
+	proxy(const proxy& v) { p = v.p; }
+
+public:
+	proxy& operator = (const proxy&);
+	operator bool() const;
+	~proxy();
+	proxy& operator = (bool x);
+
+	friend proxy make_proxy(T& obj)
+	{
+		return proxy<decltype(obj)> p(obj);
+	}
+};
 
 
 template <class oIterator>
 class obit_iterator : public std::iterator <typename std::output_iterator_tag, proxy<oIterator>>
-
 {
 private:
 	oIterator iter;
-
-	template <class T>
-	class proxy {
-	private:
-		T& p;
-		proxy() {}
-		proxy(T v) : p(v) {}
-		proxy(const proxy& v) { p = v.p; }
-		
-	public:
-		proxy& operator = (const proxy&);
-		operator bool() const;
-		~proxy();
-		proxy& operator = (bool x);
-	};
-
-//	proxy<??> m;
-
-	
-
 public:
 	obit_iterator(oIterator it) : iter(it) {}
 	obit_iterator(const obit_iterator& obj) { iter = obj.iter; }
@@ -60,10 +54,7 @@ public:
 
 	proxy<oIterator> operator*() //const
 	{
-		proxy<decltype(*this)> p(*this);
-		
-		//return m(*this);
-		return p;
+		return make_proxy(*this);
 	}
 
 	obit_iterator& operator = (const obit_iterator& obj)
@@ -73,5 +64,4 @@ public:
 	}
 
 };
-
 
