@@ -19,6 +19,11 @@ public:
 	operator bool() const;
 	~proxy();
 	proxy& operator = (bool x);
+
+	//friend proxy make_proxy(T& obj)
+	//{
+	//return proxy<decltype(obj)>(obj);
+
 };
 
 	template <class oIterator>
@@ -50,7 +55,7 @@ public:
 
 		proxy<oIterator> operator*() //const
 		{
-			return proxy<decltype(*this)>(*this);
+			return proxy(*this);
 		}
 
 		obit_iterator& operator = (const obit_iterator& obj)
