@@ -7,28 +7,27 @@
 
 template <class T>
 class proxy {
-	template <class oIterator>
-	friend class obit_iterator;
+	friend T;
 private:
 	T& p;
 	proxy(T& v) : p(v) {}
-	proxy(const proxy& v) { p = v.p; }
+	proxy(const proxy& v): p(v.p) {}
 
 public:
 	proxy& operator = (const proxy&);
-	operator bool() const;
-	~proxy();
-	proxy& operator = (bool x);
+	operator bool() const { return false; }
+	//~proxy();
+	proxy& operator = (bool x)  { return *this; }
 };
 
 	template <class oIterator>
-	  class obit_iterator : public std::iterator < typename std::output_iterator_tag, proxy<oIterator> >
+	  class obit_iterator : public std::iterator < typename std::output_iterator_tag, proxy<obit_iterator<oIterator>> >
 	{
 	private:
 		oIterator iter;
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
-		obit_iterator(const obit_iterator& obj) { iter = obj.iter; }
+		obit_iterator(const obit_iterator& obj) : iter(obj.iter) {}
 		obit_iterator() {}
 		~obit_iterator() {}
 
@@ -48,9 +47,14 @@ public:
 		bool operator==(const obit_iterator& rhs) const { return (iter == rhs.iter); }
 		bool operator!=(const obit_iterator& rhs) const { return !(*this == rhs); }
 
-		proxy<oIterator> operator*() //const
+		/*proxy<oIterator> operator*() //const
 		{
 			return proxy<decltype(*this)>(*this);
+		}*/
+		
+		typename obit_iterator::value_type operator*() //const
+		{
+			return *this;
 		}
 
 		obit_iterator& operator = (const obit_iterator& obj)

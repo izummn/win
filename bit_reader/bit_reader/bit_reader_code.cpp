@@ -22,6 +22,7 @@ int main()
 	//p = false;
 	*b++ = false;
 	 *b = true;
+	 std::cout <<" ff " << *b;
 
 	/* for (int i = 0; i < p.size(); i++)
 		 std::cout << p[i] << " p ";*/
