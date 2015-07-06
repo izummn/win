@@ -4,20 +4,31 @@
 #include <iterator>
 #include <vector>
 
-
+using std::boolalpha;
 template <class T>
 class proxy {
 	friend T;
 private:
 	T& p;
+	bool val;
 	proxy(T& v) : p(v) {}
-	proxy(const proxy& v): p(v.p) {}
+	proxy(const proxy& v) :p(v.p), val(v.val){}
 
 public:
-	proxy& operator = (const proxy&);
-	operator bool() const { return false; }
+	proxy& operator = (const proxy&) = default;
+	operator bool() const 
+	{
+		proxy obj(*this);
+		return obj.val; 
+	}
+
+	proxy& operator = (bool x) 
+	{
+		val = x;
+		return *this; 
+	}
+
 	//~proxy();
-	proxy& operator = (bool x)  { return *this; }
 };
 
 	template <class oIterator>

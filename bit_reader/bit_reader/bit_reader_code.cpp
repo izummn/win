@@ -20,9 +20,12 @@ int main()
 
 	//proxy p(b); // это возвращает *b
 	//p = false;
-	*b++ = false;
+	//*b++ = false;
 	 *b = true;
-	 std::cout <<" ff " << *b;
+	 std::cout << "  " << *b;
+	 b++;
+	 *b = false;
+	 std::cout << " " << *b;
 
 	/* for (int i = 0; i < p.size(); i++)
 		 std::cout << p[i] << " p ";*/
