@@ -26,6 +26,7 @@ public:
 		val = x;
 		return *this; 
 	}
+	~proxy(){};
 
 };
 
