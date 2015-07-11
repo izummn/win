@@ -12,23 +12,21 @@ private:
 	T& p;
 	bool val;
 	proxy(T& v) : p(v) {}
-	proxy(const proxy& v) :p(v.p), val(v.val){}
+	proxy(const proxy& v) :p(v.p), val(v.val){ }
 
 public:
 	proxy& operator = (const proxy&) = default;
 	operator bool() const 
 	{
-		proxy obj(*this);
-		return obj.val; 
+		return val;
 	}
 
-	proxy& operator = (bool x) 
+	proxy& operator = (bool x)
 	{
 		val = x;
 		return *this; 
 	}
 
-	//~proxy();
 };
 
 	template <class oIterator>
