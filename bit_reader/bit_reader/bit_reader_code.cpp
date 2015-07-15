@@ -11,35 +11,40 @@ const int nBits = 64;
 
 int main()
 {
-	std::vector<int> v{ { 45, -12, 33, -48, 23, 58, 89 } };
+/*	std::vector<int> v{ { 45, -12, 33, -48, 23, 58, 89 } };
 	std::copy(make_bit_iterator(v.begin()), make_bit_iterator(v.end()), std::ostream_iterator<int>(std::cout, " "));
 	std::cout << std::endl;
+	*/
+	//std::vector<uint8_t> p;
+	//obit_iterator<decltype(back_inserter(p))>  b(back_inserter(p));
 
-	std::vector<int> p;
-	obit_iterator<decltype(back_inserter(p))>  b(back_inserter(p));
 
-	//proxy p(b); // это возвращает *b
-	//p = false;
-	//*b++ = false;
 
-	 
-	p.push_back(*b = true);
-	 std::cout << "  " << p[0];
-	 b++;
-	 p.push_back(*b = false);
-	 std::cout << " " <<  p[1];
+	std::vector<uint8_t> p(4);
+	std::vector<uint8_t>::iterator it(p.begin());
 
-	/* for (int i = 0; i < p.size(); i++)
-		 std::cout << p[i] << " p ";*/
+	obit_iterator<std::vector<uint8_t>::iterator>  b(it);
 
-	/*vector<int> l{ { 0, 7 } };
-	auto it = l.begin() + 1;
-	*it = 9;
-	obit_iterator<decltype(back_inserter(l))>  x(back_inserter(l));
-	// l == {{ 0, 9 }}
-	x++;
-	for (int i = 0; i < l.size(); i++)
-		std::cout << l[i] << " l ";*/
+	*b = true;
+	std::cout << " 1) " << *b << std::endl;
+	b++;
+	*b = false; 
+	std::cout << " 2) " << *b << std::endl;
+	b++;
+	*b = true;
+	std::cout << " 3) " << *b << std::endl;
+	b++;
+	*b = false;
+	std::cout << " 4) " << *b << std::endl;
+
+	/*for (int i = 0; i < 2; i++)
+	{
+		b++;
+		*b = true;
+		std::cout << i << ") " << *b << std::endl;;
+	}*/
+	
+
 	 
 	return 0;
 }

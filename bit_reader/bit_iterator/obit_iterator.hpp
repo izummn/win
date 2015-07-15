@@ -4,26 +4,27 @@
 #include <iterator>
 #include <vector>
 
-using std::boolalpha;
+
+
 template <class T>
 class proxy {
 	friend T;
 private:
 	T& p;
-	bool val;
 	proxy(T& v) : p(v) {}
-	proxy(const proxy& v) :p(v.p), val(v.val){ }
+	proxy(const proxy& v) :p(v.p) {}
 
 public:
 	proxy& operator = (const proxy&) = default;
+
 	operator bool() const 
 	{
-		return val;
+		return p.get_current_bit();
 	}
 
 	proxy& operator = (bool x)
 	{
-		val = x;
+		p.set_current_bit(x);
 		return *this; 
 	}
 	~proxy(){};
@@ -35,6 +36,7 @@ public:
 	{
 	private:
 		oIterator iter;
+		int bitCount = 0;
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
 		obit_iterator(const obit_iterator& obj) : iter(obj.iter) {}
@@ -45,6 +47,7 @@ public:
 		{
 			++iter;
 			return *this;
+
 		}
 
 		obit_iterator operator++(int)
@@ -57,10 +60,18 @@ public:
 		bool operator==(const obit_iterator& rhs) const { return (iter == rhs.iter); }
 		bool operator!=(const obit_iterator& rhs) const { return !(*this == rhs); }
 
-		/*proxy<oIterator> operator*() //const
+	    
+		void set_current_bit(bool b)
 		{
-			return proxy<decltype(*this)>(*this);
-		}*/
+			*iter = b;
+		};
+
+		bool get_current_bit() const
+		{
+			return *iter;
+		};
+
+		
 		
 		typename obit_iterator::value_type operator*() //const
 		{
