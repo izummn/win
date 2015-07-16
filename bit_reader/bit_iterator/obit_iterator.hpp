@@ -36,7 +36,6 @@ public:
 	{
 	private:
 		oIterator iter;
-		int bitCount = 0;
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
 		obit_iterator(const obit_iterator& obj) : iter(obj.iter) {}
