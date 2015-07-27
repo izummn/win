@@ -16,14 +16,8 @@ private:
 
 public:
 	proxy& operator = (const proxy&) = default;
-
-	operator bool() const 
-	{
-		return p.get_current_bit();
-	}
-
 	proxy& operator = (bool x)
-	{
+	{	
 		p.set_current_bit(x);
 		return *this; 
 	}
@@ -36,15 +30,21 @@ public:
 	{
 	private:
 		oIterator iter;
+		int bitCount = 0;
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
-		obit_iterator(const obit_iterator& obj) : iter(obj.iter) {}
+		obit_iterator(const obit_iterator& obj) : iter(obj.iter), bitCount(obj.bitCount) {}
 		obit_iterator() {}
 		~obit_iterator() {}
 
 		obit_iterator& operator++()
 		{
-			++iter;
+			bitCount++;
+			if (bitCount == CHAR_BIT * sizeof(decltype(*iter)))
+			{
+				++iter;
+				bitCount = 0;
+			}
 			return *this;
 
 		}
@@ -52,7 +52,7 @@ public:
 		obit_iterator operator++(int)
 		{
 			obit_iterator temp(*this);
-			iter++;
+			++(*this);
 			return temp;
 		}
 
@@ -62,7 +62,7 @@ public:
 	    
 		void set_current_bit(bool b)
 		{
-			*iter = b;
+			*iter |= (b << bitCount);
 		};
 
 		bool get_current_bit() const
@@ -70,8 +70,13 @@ public:
 			return *iter;
 		};
 
-		
-		
+		obit_iterator operator+=(int v)
+		{
+			for (int i(0); i < v; i++)
+				(*this)++;
+			return *this;
+		}
+	
 		typename obit_iterator::value_type operator*() //const
 		{
 			return *this;
@@ -80,6 +85,7 @@ public:
 		obit_iterator& operator = (const obit_iterator& obj)
 		{
 			iter = obj.iter;
+			bitCount = obj.bitCount;
 			return *this;
 		}
 
