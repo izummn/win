@@ -4,6 +4,7 @@
 #include <fstream>
 #include <bitset>
 #include <bit_iterator.hpp>
+#include <obit_iterator.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <catch.hpp>
 #include <algorithm>
@@ -26,13 +27,6 @@ const std::bitset < nBits > zeros;
 const std::bitset < nBits > randoms(std::rand());
 const std::bitset < nBits >  empty;
 
-
-/*template< class Iterator>
-class out_iterator : public std::iterator < std::output_iterator_tag, int >
-{
-private:
-	
-};*/
 
 
 template<class Container>
@@ -67,7 +61,6 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::forward_list<uint8_t>>(std
 }
 
 
-
 template<>
 boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::istreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
 {
@@ -98,6 +91,34 @@ std::bitset<nBits> to_output_iterator(std::bitset<nBits> bitsLine)
 	std::bitset<nBits> temp(l.to_ulong());
 	return temp;
 }
+
+
+std::vector<uint8_t> to_vector(std::bitset<nBits> bitsLine)
+{
+	std::vector<uint8_t> res(nBits/CHAR_BIT);
+	std::bitset<CHAR_BIT> temp;
+	for (int i(nBits - 1); i >= 0; i--)
+	{
+		temp[i % CHAR_BIT] = bitsLine[i];
+		if ((i % CHAR_BIT) == 0)
+		{
+			res[i / CHAR_BIT] = (uint8_t)temp.to_ulong();
+			temp.reset();
+		};
+	}
+	return res;
+}
+
+std::vector<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
+{
+	std::vector<uint8_t> p(nBits / CHAR_BIT);
+	std::vector<uint8_t>::iterator it(p.begin());
+	obit_iterator<std::vector<uint8_t>::iterator>  b(it);
+	for (int i(0); i < nBits; i++)
+		if (bitsLine[i] == 1) *b++ = true;
+		else *b++ = false;
+		return p;
+};
 
 
 
@@ -164,8 +185,7 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 
 };
 
-
-	TEST_CASE(" Test Bit reader: istream ", "¹4")
+TEST_CASE(" Test Bit reader: istream ", "¹4")
 	{
 		SECTION(" Manual string: ") {
 			REQUIRE(to_dynamic_bitset<std::istreambuf_iterator<char>>(manual) == expected_string(manual));
@@ -185,8 +205,7 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 
 };
 
-
-	TEST_CASE(" Test Bit reader: additional ", "¹5")
+TEST_CASE(" Test Bit reader: additional ", "¹5")
 	{
 
 		SECTION("  Empty container: ") {
@@ -227,7 +246,7 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 		
 	};
 
-	TEST_CASE(" Reverce task", "¹6")
+TEST_CASE(" Reverce task", "¹6")
 	{
 
 		SECTION(" For manual string: ") {
@@ -236,3 +255,25 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 	};
 
 
+
+TEST_CASE(" Test output bit reader: ", "¹7")
+	{
+	
+		SECTION("  Ones file: ") {
+			REQUIRE(to_obit_iterator(ones) == to_vector(ones));
+		}
+
+
+		SECTION(" Manual string: ") {
+			REQUIRE(to_obit_iterator(manual) == to_vector(manual));
+		}
+
+		SECTION(" String with 0: ") {
+			REQUIRE(to_obit_iterator(zeros) == to_vector(zeros));
+		}
+
+		SECTION(" Random string: ") {
+			REQUIRE(to_obit_iterator(randoms) == to_vector(randoms));
+		}
+
+	};
