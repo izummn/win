@@ -28,7 +28,6 @@ const std::bitset < nBits > randoms(std::rand());
 const std::bitset < nBits >  empty;
 
 
-
 template<class Container>
 boost::dynamic_bitset<uint8_t> to_dynamic_bitset(std::bitset<nBits> bitsLine)
 {
@@ -60,7 +59,6 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::forward_list<uint8_t>>(std
 	return output;
 }
 
-
 template<>
 boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::istreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
 {
@@ -75,8 +73,6 @@ boost::dynamic_bitset<uint8_t> to_dynamic_bitset<std::istreambuf_iterator<char>>
 	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 	return output;
 }
-
-
 boost::dynamic_bitset<uint8_t> expected_string(std::bitset<nBits> bitsLine)
 	{
 	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
@@ -93,23 +89,15 @@ std::bitset<nBits> to_output_iterator(std::bitset<nBits> bitsLine)
 }
 
 
-std::vector<uint8_t> to_vector(std::bitset<nBits> bitsLine)
+boost::dynamic_bitset<uint8_t> for_vector_test(std::bitset<nBits> bitsLine)
 {
-	std::vector<uint8_t> res(nBits/CHAR_BIT);
-	std::bitset<CHAR_BIT> temp;
-	for (int i(nBits - 1); i >= 0; i--)
-	{
-		temp[i % CHAR_BIT] = bitsLine[i];
-		if ((i % CHAR_BIT) == 0)
-		{
-			res[i / CHAR_BIT] = (uint8_t)temp.to_ulong();
-			temp.reset();
-		};
-	}
-	return res;
+	boost::dynamic_bitset<uint8_t> result(bitsLine.to_string());
+	return result;
 }
 
-std::vector<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
+
+/*   ////////  work correct, but not effective
+std::vector<uint8_t> to_obit_iterator_vector(std::bitset<nBits> bitsLine)
 {
 	std::vector<uint8_t> p(nBits / CHAR_BIT);
 	std::vector<uint8_t>::iterator it(p.begin());
@@ -118,8 +106,39 @@ std::vector<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
 		if (bitsLine[i] == 1) *b++ = true;
 		else *b++ = false;
 		return p;
-};
+};*/
 
+boost::dynamic_bitset<uint8_t> to_obit_iterator_vector(std::bitset<nBits> bitsLine)
+{
+	std::vector<uint8_t> p(nBits / CHAR_BIT);
+	std::vector<uint8_t>::iterator it(p.begin());
+	obit_iterator<std::vector<uint8_t>::iterator>  b(it);
+
+	boost::dynamic_bitset<uint8_t> output;
+	//std::for_each(b, b += nBits, [&output](bool x) { output.push_back(x); });
+
+	for (int i(0); i < nBits; i++)
+		if (bitsLine[i] == 1)
+		{
+		*b++ = true;
+//		output.push_back(true);
+		}
+
+		else
+		{
+			*b++ = false;
+//			output.push_back(false);
+		}
+
+//	boost::dynamic_bitset<uint8_t> expected(bitsLine.to_string());
+
+	//boost::from_block_range(p.begin(), p.end() - 1, output );
+	/*for (int i(0); i < (nBits / CHAR_BIT); i++)
+		to_block_
+		output.push_back(p[i]);*/
+	//std::for_each(p.begin(), p.end(), [&output](uint8_t x) { output.push_back(x); });
+	return output;
+};
 
 
 TEST_CASE(" Test Bit reader: vector ", "¹1")
@@ -143,7 +162,6 @@ TEST_CASE(" Test Bit reader: vector ", "¹1")
 
 	}
 };
-
 TEST_CASE(" Test Bit reader: list ", "¹2")
 {
 	SECTION(" Manual string: ") {
@@ -163,7 +181,6 @@ TEST_CASE(" Test Bit reader: list ", "¹2")
 
 	}
 };
-
 TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 {
 		SECTION(" Manual string: ") {
@@ -184,7 +201,6 @@ TEST_CASE(" Test Bit reader: forward_list ", "¹3")
 		}
 
 };
-
 TEST_CASE(" Test Bit reader: istream ", "¹4")
 	{
 		SECTION(" Manual string: ") {
@@ -204,7 +220,6 @@ TEST_CASE(" Test Bit reader: istream ", "¹4")
 		}
 
 };
-
 TEST_CASE(" Test Bit reader: additional ", "¹5")
 	{
 
@@ -245,7 +260,6 @@ TEST_CASE(" Test Bit reader: additional ", "¹5")
 		}
 		
 	};
-
 TEST_CASE(" Reverce task", "¹6")
 	{
 
@@ -258,12 +272,15 @@ TEST_CASE(" Reverce task", "¹6")
 
 TEST_CASE(" Test output bit reader: ", "¹7")
 	{
+	SECTION("  Ones file: ") {
+		REQUIRE(to_obit_iterator_vector(manual) == for_vector_test(manual));
+	}
+
+	//		REQUIRE(to_obit_iterator_list(manual) == to_list(manual));
+	//	}
 	
-		SECTION("  Ones file: ") {
-			REQUIRE(to_obit_iterator(ones) == to_vector(ones));
-		}
 
-
+/*
 		SECTION(" Manual string: ") {
 			REQUIRE(to_obit_iterator(manual) == to_vector(manual));
 		}
@@ -275,5 +292,5 @@ TEST_CASE(" Test output bit reader: ", "¹7")
 		SECTION(" Random string: ") {
 			REQUIRE(to_obit_iterator(randoms) == to_vector(randoms));
 		}
-
+		*/
 	};
