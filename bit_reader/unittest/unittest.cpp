@@ -105,16 +105,36 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
 	return output;
 };
 
-template<>
-boost::dynamic_bitset<uint8_t> to_obit_iterator<std::istreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
-{
-	//std::istreambuf_iterator<bool>  p;
-	
 
-	//for (int i(0); i < nBits; ++i)
-	//	*b++ = bitsLine[i];
+/*boost::dynamic_bitset<uint8_t> to_obit_iterator_back(std::bitset<nBits> bitsLine)
+{
+	std::vector<uint8_t> p(nBits / CHAR_BIT);
+	std::vector<uint8_t>::iterator it(p.begin());
+	obit_iterator<std::vector<uint8_t>::iterator>  b(it);
+
+	for (int i(0); i < nBits; ++i)
+		*b++ = bitsLine[i];
 	boost::dynamic_bitset<uint8_t> output;
-	///////////
+	std::vector<uint8_t> f;
+
+	return output;
+};*/
+
+
+template<>
+boost::dynamic_bitset<uint8_t> to_obit_iterator<std::ostreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
+{
+	//std::ostreambuf_iterator<char> p;
+	std::stringstream p;
+	bit_iterator<std::istreambuf_iterator<char>> it((std::istreambuf_iterator<char>(p)));
+	obit_iterator<bit_iterator<std::istreambuf_iterator<char>>>  b(it);
+	obit_iterator<bit_iterator<std::istreambuf_iterator<char>>>  b2;
+
+	for (int i(0); i < nBits; ++i)
+		*b++ = bitsLine[i];
+	//std::cout << p;
+	boost::dynamic_bitset<uint8_t> output;
+	std::for_each(b, b2, [&output](bool x) { output.push_back(x); });
 	return output;
 };
 
@@ -312,23 +332,22 @@ TEST_CASE(" Test output bit reader: forward list ", "¹9")
 	}
 };
 
-/* 
+
 TEST_CASE(" Test output bit reader: istream iterator ", "¹10")
 {
-	SECTION("  Ones file: ") {
-		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(ones) == expected_string(ones));
-	}
+	/*SECTION("  Ones file: ") {
+		REQUIRE(to_obit_iterator_back(ones) == expected_string(ones));
+	}*/
 
 	SECTION(" Manual string: ") {
-		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(manual) == expected_string(manual));
+		REQUIRE(to_obit_iterator<std::ostreambuf_iterator<uint8_t>>(manual) == expected_string(manual));
 	}
 
-	SECTION(" String with 0: ") {
+	/*SECTION(" String with 0: ") {
 		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(zeros) == expected_string(zeros));
 	}
 
 	SECTION(" Random string: ") {
 		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(randoms) == expected_string(randoms));
-	}
+	}*/
 };
-*/

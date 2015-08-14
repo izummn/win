@@ -91,20 +91,3 @@ public:
 
 	};
 
-	  template<class iterator>
-	  obit_iterator<iterator> make_obit_iterator(iterator it)
-	  {
-
-		  // std::vector<uint8_t> p(nBits / CHAR_BIT);
-		//  Container::iterator it(p.begin());
-		  obit_iterator<decltype(it)>  b(it);
-
-		  //obit_iterator<decltype(it)> obj(it);
-		  return obj;
-	  };
-
-		 /* std::list<uint8_t>::iterator it(p.begin());
-		  obit_iterator<std::list<uint8_t>::iterator>  b(it);
-	  };
-
-	  */
