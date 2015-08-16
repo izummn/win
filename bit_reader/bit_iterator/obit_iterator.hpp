@@ -3,6 +3,8 @@
 #include <array>
 #include <iterator>
 #include <vector>
+#include <string>
+
 
 
 
@@ -62,7 +64,8 @@ public:
 	    
 		void set_current_bit(bool b)
 		{
-			*iter |= (b << bitCount);
+			
+			*iter |= b << bitCount;
 		};
 
 		bool get_current_bit() const

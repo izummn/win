@@ -95,8 +95,8 @@ template<class Container>
 boost::dynamic_bitset<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
 {
 	Container p(nBits / CHAR_BIT);
-	Container::iterator it(p.begin());
-	obit_iterator<Container::iterator>  b(it);
+	typename Container::iterator it(p.begin());
+	obit_iterator<typename Container::iterator>  b(it);
 
 	for (int i(0); i < nBits; ++i)
 		*b++ = bitsLine[i];
@@ -105,38 +105,63 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
 	return output;
 };
 
-
-/*boost::dynamic_bitset<uint8_t> to_obit_iterator_back(std::bitset<nBits> bitsLine)
-{
-	std::vector<uint8_t> p(nBits / CHAR_BIT);
-	std::vector<uint8_t>::iterator it(p.begin());
-	obit_iterator<std::vector<uint8_t>::iterator>  b(it);
-
-	for (int i(0); i < nBits; ++i)
-		*b++ = bitsLine[i];
-	boost::dynamic_bitset<uint8_t> output;
-	std::vector<uint8_t> f;
-
-	return output;
-};*/
-
-
 template<>
 boost::dynamic_bitset<uint8_t> to_obit_iterator<std::ostreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
 {
-	//std::ostreambuf_iterator<char> p;
-	std::stringstream p;
-	bit_iterator<std::istreambuf_iterator<char>> it((std::istreambuf_iterator<char>(p)));
-	obit_iterator<bit_iterator<std::istreambuf_iterator<char>>>  b(it);
-	obit_iterator<bit_iterator<std::istreambuf_iterator<char>>>  b2;
+	std::stringstream s;
+	std::ostreambuf_iterator<char> p(s);
+	obit_iterator<std::ostreambuf_iterator<char>>  b(p);
 
 	for (int i(0); i < nBits; ++i)
 		*b++ = bitsLine[i];
-	//std::cout << p;
+
 	boost::dynamic_bitset<uint8_t> output;
-	std::for_each(b, b2, [&output](bool x) { output.push_back(x); });
+	bit_iterator<std::istreambuf_iterator<char>>  first((std::istreambuf_iterator<char>(s)));
+	bit_iterator<std::istreambuf_iterator<char>>  last((std::istreambuf_iterator<char>()));
+
+	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
+	return output;
+
+};
+
+template<>
+boost::dynamic_bitset<uint8_t> to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(std::bitset<nBits> bitsLine)
+{
+	std::vector<uint8_t> p(nBits / CHAR_BIT);
+	std::back_insert_iterator<std::vector<uint8_t>> it(p);
+	obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>  b(it);
+
+	for (int i(0); i < nBits; ++i)
+		*b++ = bitsLine[i];
+
+	boost::dynamic_bitset<uint8_t> output;
+	std::for_each(make_bit_iterator(p.begin()), make_bit_iterator(p.end()), [&output](bool x) { output.push_back(x); });
 	return output;
 };
+
+template<>
+boost::dynamic_bitset<uint8_t> to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(std::bitset<nBits> bitsLine)
+{
+	std::string s = bitsLine.to_string();
+	for (int i = 0; i <= nBits - CHAR_BIT; i += CHAR_BIT)
+		std::reverse(std::begin(s) + i, std::begin(s) + i + CHAR_BIT);
+	std::reverse(std::begin(s), std::end(s));
+	std::bitset<nBits> line(s);
+
+
+	std::forward_list<uint8_t> p(nBits / CHAR_BIT);
+	std::front_insert_iterator<std::forward_list<uint8_t>> it(p);
+	obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>  b(it);
+
+	for (int i(0); i < nBits; ++i)
+		*b++ = line[i];
+
+	boost::dynamic_bitset<uint8_t> output;
+	std::for_each(make_bit_iterator(p.begin()), make_bit_iterator(p.end()), [&output](bool x) { output.push_back(x); });
+	return output;
+};
+
+
 
 
 ////////////////////////////////////****************** TEST INPUT ITERATOR **************************///////////////
@@ -335,19 +360,59 @@ TEST_CASE(" Test output bit reader: forward list ", "¹9")
 
 TEST_CASE(" Test output bit reader: istream iterator ", "¹10")
 {
-	/*SECTION("  Ones file: ") {
-		REQUIRE(to_obit_iterator_back(ones) == expected_string(ones));
-	}*/
-
-	SECTION(" Manual string: ") {
-		REQUIRE(to_obit_iterator<std::ostreambuf_iterator<uint8_t>>(manual) == expected_string(manual));
+	SECTION("  Ones file: ") {
+		REQUIRE(to_obit_iterator<std::istreambuf_iterator<char>>(ones) == expected_string(ones));
 	}
 
-	/*SECTION(" String with 0: ") {
-		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(zeros) == expected_string(zeros));
+	SECTION(" Manual string: ") {
+		REQUIRE(to_obit_iterator<std::istreambuf_iterator<char>>(manual) == expected_string(manual));
+	}
+
+	SECTION(" String with 0: ") {
+		REQUIRE(to_obit_iterator<std::istreambuf_iterator<char>>(zeros) == expected_string(zeros));
 	}
 
 	SECTION(" Random string: ") {
-		REQUIRE(to_obit_iterator<std::istreambuf_iterator<uint8_t>>(randoms) == expected_string(randoms));
-	}*/
+		REQUIRE(to_obit_iterator<std::istreambuf_iterator<char>>(randoms) == expected_string(randoms));
+	}
+};
+
+
+TEST_CASE(" Test output bit reader: back insert iterator ", "¹11")
+{
+	SECTION("  Ones file: ") {
+		REQUIRE(to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(ones) == expected_string(ones));
+	}
+
+	SECTION(" Manual string: ") {
+		REQUIRE(to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(manual) == expected_string(manual));
+	}
+
+	SECTION(" String with 0: ") {
+		REQUIRE(to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(zeros) == expected_string(zeros));
+	}
+
+	SECTION(" Random string: ") {
+		REQUIRE(to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(randoms) == expected_string(randoms));
+	}
+};
+
+
+TEST_CASE(" Test output bit reader: front insert iterator ", "¹12")
+{
+	SECTION("  Ones file: ") {
+		REQUIRE(to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(ones) == expected_string(ones));
+	}
+
+	SECTION(" Manual string: ") {
+		REQUIRE(to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(manual) == expected_string(manual));
+	}
+
+	SECTION(" String with 0: ") {
+		REQUIRE(to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(zeros) == expected_string(zeros));
+	}
+
+	SECTION(" Random string: ") {
+		REQUIRE(to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(randoms) == expected_string(randoms));
+	}
 };
