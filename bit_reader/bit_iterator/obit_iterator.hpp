@@ -32,7 +32,14 @@ public:
 	{
 	private:
 		oIterator iter;
+
 		int bitCount = 0;
+
+		// 1)  //   std::bitset<CHAR_BIT> cached = 0;
+
+		// 2)  
+		int cached = 0;
+
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
 		obit_iterator(const obit_iterator& obj) : iter(obj.iter), bitCount(obj.bitCount) {}
@@ -42,10 +49,18 @@ public:
 		obit_iterator& operator++()
 		{
 			bitCount++;
+			
 			if (bitCount == CHAR_BIT * sizeof(decltype(*iter)))
 			{
-				++iter;
+				// 1)    //  *iter++ = cached.to_ulong();
+
+				// 2)    
+				*iter++ = cached;
+
+				//  old   // ++iter;
+
 				bitCount = 0;
+
 			}
 			return *this;
 
@@ -60,12 +75,22 @@ public:
 
 		bool operator==(const obit_iterator& rhs) const { return (iter == rhs.iter); }
 		bool operator!=(const obit_iterator& rhs) const { return !(*this == rhs); }
-
+		bool operator|=( obit_iterator& rhs) { return iter |= rsh.iter };
 	    
 		void set_current_bit(bool b)
 		{
-			
-			*iter |= b << bitCount;
+			// 1)   //    cached[CHAR_BIT - bitCount - 1] = b;
+
+
+			// 2)   //
+			cached |= b << bitCount;		
+
+
+			//  old  //    *iter |= b << bitCount;
+
+
+
+			//std::cout << " cached = " << cached << std::endl;
 		};
 
 		bool get_current_bit() const

@@ -21,7 +21,8 @@
 
 const int nBits = 64;
 
-const std::bitset < nBits > manual("1011100110110000101100100");
+
+const std::bitset < nBits > manual("10111001101100101100100"); // 29 symbols
 const std::bitset < nBits > ones(std::numeric_limits<uint64_t>::max());
 const std::bitset < nBits > zeros;
 const std::bitset < nBits > randoms(std::rand());
@@ -105,7 +106,7 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator(std::bitset<nBits> bitsLine)
 	return output;
 };
 
-template<>
+/*template<>
 boost::dynamic_bitset<uint8_t> to_obit_iterator<std::ostreambuf_iterator<char>>(std::bitset<nBits> bitsLine)
 {
 	std::stringstream s;
@@ -122,9 +123,9 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator<std::ostreambuf_iterator<char>>(
 	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 	return output;
 
-};
+};*/
 
-template<>
+/*template<>
 boost::dynamic_bitset<uint8_t> to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(std::bitset<nBits> bitsLine)
 {
 	std::vector<uint8_t> p(nBits / CHAR_BIT);
@@ -161,7 +162,7 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator<std::front_insert_iterator<std::
 	return output;
 };
 
-
+*/
 
 
 ////////////////////////////////////****************** TEST INPUT ITERATOR **************************///////////////
@@ -315,6 +316,10 @@ TEST_CASE(" Test output bit reader: vector ", "¹7")
 		SECTION(" Random string: ") {
 			REQUIRE(to_obit_iterator<std::vector<uint8_t>>(randoms) == expected_string(randoms));
 		}
+
+	/*	SECTION(" Manual_t string: ") {
+			REQUIRE(to_obit_iterator<std::vector<uint8_t>>(manual_t) == expected_string(manual_t));
+		}*/
 	};
 
 
@@ -357,7 +362,7 @@ TEST_CASE(" Test output bit reader: forward list ", "¹9")
 	}
 };
 
-
+/*
 TEST_CASE(" Test output bit reader: istream iterator ", "¹10")
 {
 	SECTION("  Ones file: ") {
@@ -416,3 +421,4 @@ TEST_CASE(" Test output bit reader: front insert iterator ", "¹12")
 		REQUIRE(to_obit_iterator<std::front_insert_iterator<std::forward_list<uint8_t>>>(randoms) == expected_string(randoms));
 	}
 };
+*/
