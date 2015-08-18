@@ -123,9 +123,9 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator<std::ostreambuf_iterator<char>>(
 	std::for_each(first, last, [&output](bool x) { output.push_back(x); });
 	return output;
 
-};*/
+};
 
-/*template<>
+template<>
 boost::dynamic_bitset<uint8_t> to_obit_iterator<std::back_insert_iterator<std::vector<uint8_t>>>(std::bitset<nBits> bitsLine)
 {
 	std::vector<uint8_t> p(nBits / CHAR_BIT);
@@ -162,8 +162,8 @@ boost::dynamic_bitset<uint8_t> to_obit_iterator<std::front_insert_iterator<std::
 	return output;
 };
 
-*/
 
+*/
 
 ////////////////////////////////////****************** TEST INPUT ITERATOR **************************///////////////
 
@@ -301,9 +301,9 @@ TEST_CASE(" Reverce task", "¹6")
 
 TEST_CASE(" Test output bit reader: vector ", "¹7")
 	{
-	SECTION("  Ones file: ") {
+	/*SECTION("  Ones file: ") {
 		REQUIRE(to_obit_iterator<std::vector<uint8_t>>(ones) == expected_string(ones));
-		}
+		}*/
 
 		SECTION(" Manual string: ") {
 			REQUIRE(to_obit_iterator<std::vector<uint8_t>>(manual) == expected_string(manual));

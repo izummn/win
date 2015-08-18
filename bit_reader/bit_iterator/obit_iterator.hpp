@@ -34,15 +34,13 @@ public:
 		oIterator iter;
 
 		int bitCount = 0;
-
-		// 1)  //   std::bitset<CHAR_BIT> cached = 0;
-
-		// 2)  
-		int cached = 0;
+		typename oIterator::value_type cached;
+	//	oIterator* cached;
+	
 
 	public:
 		obit_iterator(oIterator it) : iter(it) {}
-		obit_iterator(const obit_iterator& obj) : iter(obj.iter), bitCount(obj.bitCount) {}
+		obit_iterator(const obit_iterator& obj) : iter(obj.iter), bitCount(obj.bitCount){}			//, cached(obj.cached) {}
 		obit_iterator() {}
 		~obit_iterator() {}
 
@@ -52,14 +50,17 @@ public:
 			
 			if (bitCount == CHAR_BIT * sizeof(decltype(*iter)))
 			{
-				// 1)    //  *iter++ = cached.to_ulong();
-
-				// 2)    
+			
 				*iter++ = cached;
-
-				//  old   // ++iter;
-
+				
+				//	cached = 0;          //clear cache
+				//  old 
+				//++iter;
+			
+				//std::cout << " bitCount " << bitCount << std::endl;
 				bitCount = 0;
+
+			
 
 			}
 			return *this;
@@ -73,24 +74,19 @@ public:
 			return temp;
 		}
 
-		bool operator==(const obit_iterator& rhs) const { return (iter == rhs.iter); }
+		bool operator==(const obit_iterator& rhs) const { return (iter == rhs.iter) || (cached == rsh.cached); }
 		bool operator!=(const obit_iterator& rhs) const { return !(*this == rhs); }
-		bool operator|=( obit_iterator& rhs) { return iter |= rsh.iter };
+		bool operator|=(obit_iterator& rhs) { return  (iter |= rsh.iter) || (cached |= rsh.cached); }
 	    
 		void set_current_bit(bool b)
 		{
-			// 1)   //    cached[CHAR_BIT - bitCount - 1] = b;
+			
+			cached |= ( b << bitCount);		
+			 
+			//  old  //  
+			//*iter |= b << bitCount;
 
-
-			// 2)   //
-			cached |= b << bitCount;		
-
-
-			//  old  //    *iter |= b << bitCount;
-
-
-
-			//std::cout << " cached = " << cached << std::endl;
+			//std::cout << " cached = " << cached;// << std::endl;
 		};
 
 		bool get_current_bit() const
@@ -114,6 +110,7 @@ public:
 		{
 			iter = obj.iter;
 			bitCount = obj.bitCount;
+			cached = obj.cached;
 			return *this;
 		}
 
